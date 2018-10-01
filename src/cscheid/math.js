@@ -2,11 +2,11 @@ import * as cscheid from "../cscheid.js";
 
 export var eps = 1e-6;
 
-export function withEps(eps, f) {
+export function withEps(thisEps, f) {
   var oldEps = eps;
   try {
-    eps = eps;
-    f();
+    eps = thisEps;
+    return f();
   } finally {
     eps = oldEps;
   }
@@ -15,7 +15,11 @@ export function withEps(eps, f) {
 export function withinEps(v) {
   return Math.abs(v) < eps;
 }
-   
+
+export function withinEpsRel(v1, v2) {
+  return Math.abs(v1 - v2) / Math.abs(v1 + v2) < eps;
+}
+
 // numerics sucks.
 export function quadratic(a, b, c) {
   if (a === 0)
@@ -31,7 +35,7 @@ export function quadratic(a, b, c) {
     return { root1: -b/(2*a), root2: -b/(2*a) };
   }
   var d = Math.sqrt(discriminant);
-  
+
   if (b >= 0) {
     return { root1: (-b - d) / (2 * a), root2: (2 * c) / (-b - d) };
   } else {
@@ -90,7 +94,7 @@ export function findExtremum(f, lo, mid, up) {
     }
     fNewMid = f(newMid);
     switch ((!longLeft) * 2 + ((fNewMid >= fMid) ^ (!mode))) {
-    case 0: 
+    case 0:
       up = mid;         // case 0
       fUp = fMid;
       mid = newMid;
@@ -130,7 +134,7 @@ export function findExtremum(f, lo, mid, up) {
 export function radians(d) {
   return d * (Math.PI/180);
 }
-    
+
 export function degrees(r) {
   return r / (Math.PI/180);
 }
