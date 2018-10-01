@@ -6,6 +6,7 @@ import * as data          from "./cscheid/data.js";
 import * as debug         from "./cscheid/debug.js";
 import * as dom           from "./cscheid/dom.js";
 import * as geometry      from "./cscheid/geometry.js";
+import * as linalg        from "./cscheid/linalg.js";
 import * as math          from "./cscheid/math.js";
 import * as plot          from "./cscheid/plot.js";
 import * as random        from "./cscheid/random.js";
@@ -21,6 +22,7 @@ export { approximation,
          debug,
          dom,
          geometry,
+         linalg,
          math,
          plot,
          random,
