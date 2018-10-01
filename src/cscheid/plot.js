@@ -1,4 +1,5 @@
 import * as cscheid from "../cscheid.js";
+import * as math from "./math.js";
 
 //////////////////////////////////////////////////////////////////////////////
 // FIXME: There are two different plotting libraries in this file,
@@ -13,7 +14,7 @@ export function surface(opts)
   var axes    = opts.axes     === undefined ? true : opts.axis;
   var margin  = opts.margin   === undefined ? 10 : opts.margin;
   var element = opts.element || cscheid.debug.die("element parameter is required");
-  
+
   var svg = element.append("svg")
       .attr("width", width)
       .attr("height", height);
@@ -92,14 +93,14 @@ export function surface(opts)
         continue;
       if (functionKeyMethods[methodName] !== undefined)
         continue;
-      
+
       // force a closure to capture in-loop variables
       result[methodName] = (methodName => function() {
         var innerSelResult = sel[methodName].apply(sel, arguments);
         return wrappedSelection(innerSelResult, fixedKeyMethods, functionKeyMethods);
       })(methodName);
     }
-    
+
     // now override the ones with explicitly given wrappers
     for (methodName in fixedKeyMethods) {
       wrapperFunction = fixedKeyMethods[methodName];
@@ -159,7 +160,7 @@ export function surface(opts)
       return value;
     }
   });
-  
+
   var surface = {
     svg: svg,
     xScale: xScale,
@@ -170,7 +171,7 @@ export function surface(opts)
       steps = steps || 100;
       var s = d3.scaleLinear().domain([0, steps]).range(xScale.domain());
       var data = d3.range(steps+1);
-      
+
       return svg.append("g").selectAll("path")
         .data(f)
         .enter().append("path")
@@ -197,7 +198,7 @@ export function surface(opts)
 
 //////////////////////////////////////////////////////////////////////////////
 // A 2D plotting library
-    
+
 export function create(div, width, height) {
   var dims = { width: width,
                height: height };
@@ -211,13 +212,13 @@ export function create(div, width, height) {
 
   var annotationsGroup = svg.append("g");
   var sceneGroup = svg.append("g");
-  
+
   var xScale = d3.scaleLinear().range([margins.left, dims.width - margins.right]);
   var yScale = d3.scaleLinear().range([dims.height - margins.bottom, margins.top]);
   var scene = [];
-  
+
   var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
-  
+
   function defaultAccessor(accessors, key, value) {
     if (accessors[key])
       return accessors[key];
@@ -239,7 +240,7 @@ export function create(div, width, height) {
     } else {
       colorAccessor = function() { return "black"; };
     }
-    
+
     return function(sel) {
       sel.attr("cx", function(d,i) { return xScale(accessors.x(d,i)); })
         .attr("cy", function(d,i) { return yScale(accessors.y(d,i)); })
@@ -249,10 +250,10 @@ export function create(div, width, height) {
       ;
     };
   }
-  
+
   function setLines(accessors) {
     var strokeAccessor = defaultAccessor(accessors, "stroke", "black");
-    
+
     return function(sel) {
       sel.attr("x1", function(d,i)  { return xScale(accessors.x1(d,i)); })
         .attr("x2", function(d,i) { return xScale(accessors.x2(d,i)); })
@@ -262,16 +263,66 @@ export function create(div, width, height) {
         .call(accessors.custom || function() {});
     };
   }
-  
+
+  // FIXME: arrows will be drawn really weirdly if chart aspect ratio
+  // doesn't match scale ratios (that is, you need the same units for x
+  // and y in the range)
+  function setArrows(accessors) {
+    var colorAccessor;
+    if (accessors.class) {
+      colorAccessor = function(d,i) {
+        return colorScale(accessors.class(d,i));
+      };
+    } else if (accessors.color) {
+      colorAccessor = function(d,i) {
+        return accessors.color(d,i);
+      };
+    } else {
+      colorAccessor = function() { return "black"; };
+    }
+
+    function arrowShape(d) {
+      var p = accessors.vector(d);
+      // var p = d.rangePerturbation || reader.project(d);
+      var l = Math.sqrt(cscheid.linalg.norm2(p)); // this is the length in world-scale; need to map to length in screen-space
+      var sx = Math.abs(xScale(1) - xScale(0)), sy = Math.abs(yScale(1) - yScale(0));
+      if (!math.withEps(0.01, () => math.withinEpsRel(sx, sy))) {
+        throw new Error("Cannot draw arrows in a non-square axis pair");
+      }
+
+      return "M 0 0 L " + (l * sx * accessors.scale) + " 0 l 0 -1 l 2 1 l -2 1 l 0 -1";
+    }
+    function arrowTransform(d) {
+      var p = accessors.vector(d);
+      var a;
+      if (cscheid.linalg.norm2(p) === 0) {
+        a = 0;
+      } else {
+        a = -Math.atan2(p[0], p[1]) * 180 / Math.PI;
+      }
+      var x = xScale(d.p[0]);
+      var y = yScale(d.p[1]);
+
+      return "translate(" + x + ", " + y + ")" + "rotate(" + a + ")";
+    }
+    return function(sel) {
+      sel.attr("d", arrowShape)
+        .attr("transform", arrowTransform)
+        .attr("stroke", colorAccessor)
+        .call(accessors.custom || function() {});
+    };
+  }
+
+
   var result = {
-    
+
     //////////////////////////////////////////////////////////////////
     // I don't like exposing the scales: if clients change settings
     // they need to remember to call update().
-    
+
     xScale: xScale,
     yScale: yScale,
-    
+
     render: function(transition) {
       scene.forEach(function(sceneObject) {
         sceneObject.update(transition);
@@ -303,7 +354,7 @@ export function create(div, width, height) {
 
     //////////////////////////////////////////////////////////////////
     // annotations
-    
+
     addXAxis: function() {
       var axis = d3.axisBottom(xScale);
       var axisG = annotationsGroup.append("g")
@@ -334,7 +385,7 @@ export function create(div, width, height) {
       scene.push(sceneObject);
       return sceneObject;
     },
-    
+
     //////////////////////////////////////////////////////////////////
     // marks
 
@@ -377,6 +428,25 @@ export function create(div, width, height) {
       scene.push(sceneObject);
       return sceneObject;
     },
+    addArrows: function(data, accessors) {
+      var group = sceneGroup.append("g");
+      group.selectAll("path")
+        .data(data)
+        .enter()
+        .append("path");
+      var sceneObject = {
+        group: group,
+        accessors: accessors,
+        update: function(transition) {
+          var sel = group.selectAll("path");
+          (transition ? sel.transition() : sel)
+            .call(setArrows(this.accessors));
+        }
+      };
+      sceneObject.update();
+      scene.push(sceneObject);
+      return sceneObject;
+    },
     addFunction: function(f, accessors) {
       accessors = accessors || {};
       accessors.value = function() { return f; };
@@ -388,13 +458,13 @@ export function create(div, width, height) {
         .data(data)
         .enter()
         .append("path");
-      
+
       var line = d3.line();
       line.x(function(d) { return xScale(d.x); });
       line.y(function(d) { return yScale(d.y); });
-      
+
       var lineResolution = 250;
-      
+
       var sceneObject = {
         group: group,
         accessors: accessors,
