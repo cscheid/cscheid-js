@@ -213,9 +213,7 @@ export function create(div, width, height) {
   var sceneGroup = svg.append("g");
   
   var xScale = d3.scaleLinear().range([margins.left, dims.width - margins.right]);
-
-  // FIXME BUG - shouldn't this be dims.height??
-  var yScale = d3.scaleLinear().range([dims.width - margins.bottom, margins.top]);
+  var yScale = d3.scaleLinear().range([dims.height - margins.bottom, margins.top]);
   var scene = [];
   
   var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
