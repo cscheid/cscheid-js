@@ -1,5 +1,8 @@
+/*global d3 */
+
 import * as cscheid from "../cscheid.js";
 import * as math from "./math.js";
+import * as blas from "./blas.js";
 
 //////////////////////////////////////////////////////////////////////////////
 // FIXME: There are two different plotting libraries in this file,
@@ -240,7 +243,6 @@ export function create(div, width, height) {
     } else {
       colorAccessor = function() { return "black"; };
     }
-
     return function(sel) {
       sel.attr("cx", function(d,i) { return xScale(accessors.x(d,i)); })
         .attr("cy", function(d,i) { return yScale(accessors.y(d,i)); })
@@ -253,7 +255,6 @@ export function create(div, width, height) {
 
   function setLines(accessors) {
     var strokeAccessor = defaultAccessor(accessors, "stroke", "black");
-
     return function(sel) {
       sel.attr("x1", function(d,i)  { return xScale(accessors.x1(d,i)); })
         .attr("x2", function(d,i) { return xScale(accessors.x2(d,i)); })
@@ -290,7 +291,15 @@ export function create(div, width, height) {
         throw new Error("Cannot draw arrows in a non-square axis pair");
       }
 
-      return "M 0 0 L " + (l * sx * accessors.scale) + " 0 l 0 -1 l 2 1 l -2 1 l 0 -1";
+      var arrowHeadScale = (accessors.arrowHeadScale || function() { return 1; })(d);
+      var negOne = String(-1 * arrowHeadScale);
+      var negTwo = String(-2 * arrowHeadScale);
+      var one = String(arrowHeadScale);
+      var two = String(2 * arrowHeadScale);
+      return "M 0 0 L " + (l * sx * accessors.scale) + " 0 l 0 " + negOne
+        + " l " + two + " " + one
+        + " l " + negTwo + " " + one
+        + " l 0 " + negOne;
     }
     function arrowTransform(d) {
       var p = accessors.vector(d);
@@ -309,10 +318,29 @@ export function create(div, width, height) {
       sel.attr("d", arrowShape)
         .attr("transform", arrowTransform)
         .attr("stroke", colorAccessor)
+        .attr("fill", colorAccessor)
         .call(accessors.custom || function() {});
     };
   }
 
+  function createSceneObject(opts) {
+    var group = sceneGroup.append("g");
+    var element = opts.element;
+    group.selectAll(element).data(opts.data)
+      .enter()
+      .append(element);
+    var sceneObject = {
+      group: group,
+      accessors: opts.accessors,
+      update: function(transition) {
+        var sel = group.selectAll(element);
+        return (transition ? sel.transition().call(transition) : sel).call(opts.setter(this.accessors));
+      }
+    };
+    sceneObject.update();
+    scene.push(sceneObject);
+    return sceneObject;
+  }
 
   var result = {
 
@@ -363,7 +391,7 @@ export function create(div, width, height) {
         group: axisG,
         axisObject: axis,
         update: function(transition) {
-          (transition ? axisG.transition() : axisG).call(axis);
+          return (transition ? axisG.transition().call(transition) : axisG).call(axis);
         }
       };
       sceneObject.update();
@@ -378,7 +406,7 @@ export function create(div, width, height) {
         group: axisG,
         axisObject: axis,
         update: function(transition) {
-          (transition ? axisG.transition() : axisG).call(axis);
+          return (transition ? axisG.transition().call(transition) : axisG).call(axis);
         }
       };
       sceneObject.update();
@@ -390,67 +418,127 @@ export function create(div, width, height) {
     // marks
 
     addPoints: function(data, accessors) {
-      var pointsGroup = sceneGroup.append("g");
-      pointsGroup.selectAll("circle")
-        .data(data)
-        .enter()
-        .append("circle");
-      var sceneObject = {
-        group: pointsGroup,
+      return createSceneObject({
+        element: "circle",
         accessors: accessors,
-        update: function(transition) {
-          var sel =  pointsGroup
-              .selectAll("circle");
-          (transition ? sel.transition() : sel).call(setPoints(this.accessors));
-        }
-      };
-      sceneObject.update();
-      scene.push(sceneObject);
-      return sceneObject;
-    },
-    addLines: function(data, accessors) {
-      var group = sceneGroup.append("g");
-      group.selectAll("line")
-        .data(data)
-        .enter()
-        .append("line");
-      var sceneObject = {
-        group: group,
-        accessors: accessors,
-        update: function(transition) {
-          var sel = group.selectAll("line");
-          (transition ? sel.transition() : sel)
-            .call(setLines(this.accessors))
-            .call(this.accessors.custom || function() {});
-        }
-      };
-      sceneObject.update();
-      scene.push(sceneObject);
-      return sceneObject;
+        data: data,
+        setter: setPoints
+      });
     },
     addArrows: function(data, accessors) {
-      var group = sceneGroup.append("g");
-      group.selectAll("path")
-        .data(data)
-        .enter()
-        .append("path");
-      var sceneObject = {
-        group: group,
+      return createSceneObject({
+        element: "path",
         accessors: accessors,
-        update: function(transition) {
-          var sel = group.selectAll("path");
-          (transition ? sel.transition() : sel)
-            .call(setArrows(this.accessors));
-        }
-      };
-      sceneObject.update();
-      scene.push(sceneObject);
-      return sceneObject;
+        data: data,
+        setter: setArrows
+      });
+    },
+    addLines: function(data, accessors) {
+      return createSceneObject({
+        element: "line",
+        accessors: accessors,
+        data: data,
+        setter: setArrows
+      });
     },
     addFunction: function(f, accessors) {
       accessors = accessors || {};
       accessors.value = function() { return f; };
       return this.addCurves([null], accessors);
+    },
+    addContours: function(scalarField, accessors,
+                          xGridScale, yGridScale) {
+      if (accessors === undefined) {
+        var fieldExtent = d3.extent(scalarField.scalarField);
+        var contourScale = d3.scaleLinear().domain([0,9]).range(fieldExtent);
+        accessors = {
+          contourValues: d3.range(0,10).map(contourScale)
+        };
+      }
+
+      xGridScale = xGridScale || d3.scaleLinear()
+        .domain([0, scalarField.dims[0]])
+        .range(xScale.domain());
+      yGridScale = yGridScale || d3.scaleLinear()
+        .domain([0, scalarField.dims[1]])
+        .range(yScale.domain());
+
+      function contourPath(contour) {
+        function pointFun(p) {
+          return xScale(xGridScale(p[0])) + " " + yScale(yGridScale(p[1]));
+        }
+        return contour.coordinates.map(
+          as => as.map(
+            a => a.map(
+              (v, i) => (i === 0 ? "M " : "L ") + pointFun(v))
+              .join(" "))
+            .join(" "))
+          .join(" ");
+      }
+      var oldScalarField = new Float64Array(scalarField.scalarField);
+      var oldContourValues = new Float64Array(scalarField.contourValues);
+      function setContours()
+      {
+        var contours = d3.contours()
+            .size(scalarField.dims)
+            .thresholds(scalarField.contourValues)(scalarField.scalarField);
+        return contours;
+      }
+
+      var group = sceneGroup.append("g");
+      var element = "path";
+      group.selectAll(element).data(setContours())
+        .enter()
+        .append(element);
+      var sceneObject = {
+        group: group,
+        accessors: accessors,
+        update: function(transition) {
+          var sel = group.selectAll(element).data(setContours());
+          var newScalarField = scalarField.scalarField;
+          var newContourValues = scalarField.contourValues;
+          var tweenField = new Float64Array(newScalarField);
+
+          if (transition) {
+            return sel.transition().call(transition)
+              .attrTween("d", function(d, i) {
+                var node = this; // , i = d3.interpolateRgb(node.getAttribute("fill"), "blue");
+                return function(t) {
+                  // INEFFICIENT AS EFFFF
+                  blas.copy(newScalarField, tweenField);
+                  blas.axby(1-t, oldScalarField, t, tweenField);
+                  var c = d3.contours()
+                      .size(scalarField.dims)
+                      .thresholds([(1-t) * oldContourValues[i] + t * newContourValues[i]])(tweenField)[0];
+                  var path = contourPath(c);
+
+                  return path;
+                };
+              })
+              .attr("stroke", accessors.stroke || "black")
+              .attr("fill", accessors.fill || "none")
+              .on("end", d => {
+                // inefficient since it's called many times, whatever.
+                oldScalarField = new Float64Array(newScalarField);
+                oldContourValues = new Float64Array(newContourValues);
+              });
+          } else {
+            var result = sel.call((function(accessors) {
+              return function(sel) {
+                sel.attr("d", contourPath)
+                  .attr("stroke", accessors.stroke || "black")
+                  .attr("fill", accessors.fill || "none");
+              };
+            })(this.accessors));
+            oldScalarField = new Float64Array(newScalarField);
+            oldContourValues = new Float64Array(newContourValues);
+            return result;
+          }
+        }
+      };
+      sceneObject.update();
+      scene.push(sceneObject);
+      return sceneObject;
     },
     addCurves: function(data, accessors) {
       var group = sceneGroup.append("g");
@@ -471,7 +559,7 @@ export function create(div, width, height) {
         update: function(transition) {
           var that = this;
           var sel = group.selectAll("path");
-          (transition ? sel.transition() : sel)
+          return (transition ? sel.transition().call(transition) : sel)
             .attr("d", function(d,ix) {
               var x2 = d3.scaleLinear().domain([0, lineResolution]).range(xScale.domain());
               var pts = [];
