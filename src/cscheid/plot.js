@@ -1,4 +1,4 @@
-/*global d3 */
+/*global d3,_ */
 
 import * as cscheid from "../cscheid.js";
 import * as math from "./math.js";
@@ -203,18 +203,37 @@ export function surface(opts)
 // A 2D plotting library
 
 export function create(div, width, height) {
-  var dims = { width: width,
-               height: height };
-  var margins = { top: 10,
-                  bottom: 10,
-                  left: 10,
-                  right: 10 };
+  var dims = { width: width, height: height };
+  var margins = { top: 10, bottom: 10, left: 10, right: 10 };
   var svg = div.append("svg")
       .attr("width", dims.width)
       .attr("height", dims.height);
 
   var annotationsGroup = svg.append("g");
   var sceneGroup = svg.append("g");
+  var layers = {
+    "annotations": annotationsGroup,
+    "scene": sceneGroup
+  };
+
+  function addGroupToLayer(opts, defaultLayer) {
+    var layer = opts.layer || defaultLayer || "scene";
+    return layers[layer].append("g");
+  }
+
+  function sceneObjectProto(opts) {
+    return _.defaults({
+      moveToFront: function() {
+        this.group.moveToFront();
+      },
+      moveToBack: function() {
+        this.group.moveToBack();
+      },
+      marks: function() {
+        return this.group.selectAll("*");
+      }
+    }, opts);
+  }
 
   var xScale = d3.scaleLinear().range([margins.left, dims.width - margins.right]);
   var yScale = d3.scaleLinear().range([dims.height - margins.bottom, margins.top]);
@@ -268,6 +287,7 @@ export function create(div, width, height) {
   // FIXME: arrows will be drawn really weirdly if chart aspect ratio
   // doesn't match scale ratios (that is, you need the same units for x
   // and y in the range)
+  var warnedAboutAspectRatio = false;
   function setArrows(accessors) {
     var colorAccessor;
     if (accessors.class) {
@@ -287,8 +307,10 @@ export function create(div, width, height) {
       // var p = d.rangePerturbation || reader.project(d);
       var l = Math.sqrt(cscheid.linalg.norm2(p)); // this is the length in world-scale; need to map to length in screen-space
       var sx = Math.abs(xScale(1) - xScale(0)), sy = Math.abs(yScale(1) - yScale(0));
-      if (!math.withEps(0.01, () => math.withinEpsRel(sx, sy))) {
-        throw new Error("Cannot draw arrows in a non-square axis pair");
+      if (!warnedAboutAspectRatio &&
+          !math.withEps(0.01, () => math.withinEpsRel(sx, sy))) {
+        warnedAboutAspectRatio = true;
+        console.warn("Drawing arrows in a non-square axis pair of aspect ratio ", sx/sy);
       }
 
       var arrowHeadScale = (accessors.arrowHeadScale || function() { return 1; })(d);
@@ -324,19 +346,19 @@ export function create(div, width, height) {
   }
 
   function createSceneObject(opts) {
-    var group = sceneGroup.append("g");
+    var group = addGroupToLayer(opts);
     var element = opts.element;
     group.selectAll(element).data(opts.data)
       .enter()
       .append(element);
-    var sceneObject = {
+    var sceneObject = sceneObjectProto({
       group: group,
       accessors: opts.accessors,
       update: function(transition) {
-        var sel = group.selectAll(element);
+        var sel = this.group.selectAll(element);
         return (transition ? sel.transition().call(transition) : sel).call(opts.setter(this.accessors));
       }
-    };
+    });
     sceneObject.update();
     scene.push(sceneObject);
     return sceneObject;
@@ -344,14 +366,19 @@ export function create(div, width, height) {
 
   var result = {
 
-    //////////////////////////////////////////////////////////////////
-    // I don't like exposing the scales: if clients change settings
-    // they need to remember to call update().
-
+    // FIXME: I don't like exposing the scales: if clients change
+    // settings directly, they need to remember to call update().
     xScale: xScale,
     yScale: yScale,
 
+    /*
+     * render()     updates the scene without a transition
+     * render(true) updates the scene with a default transition
+     * render(f)    updates the scene with sel.transition().call(f)
+     */
     render: function(transition) {
+      if (transition === true)
+        transition = d => d;
       scene.forEach(function(sceneObject) {
         sceneObject.update(transition);
       });
@@ -376,39 +403,45 @@ export function create(div, width, height) {
       if (obj.left !== undefined) margins.left = obj.left;
       if (obj.right !== undefined) margins.right = obj.right;
       xScale.range([margins.left, dims.width - margins.right]);
-      yScale.range([dims.width - margins.bottom, margins.top]);
+      yScale.range([dims.height - margins.bottom, margins.top]);
       result.render();
     },
 
     //////////////////////////////////////////////////////////////////
     // annotations
 
-    addXAxis: function() {
+    addXAxis: function(opts) {
+      opts = opts || {
+        yBaseline: 0
+      };
       var axis = d3.axisBottom(xScale);
-      var axisG = annotationsGroup.append("g")
-          .attr("transform", "translate(0," + yScale(0) + ")");
-      var sceneObject = {
+      var axisG = addGroupToLayer(opts, "annotations")
+          .attr("transform", "translate(0," + yScale(opts.yBaseline) + ")");
+      var sceneObject = sceneObjectProto({
         group: axisG,
         axisObject: axis,
         update: function(transition) {
           return (transition ? axisG.transition().call(transition) : axisG).call(axis);
         }
-      };
+      });
       sceneObject.update();
       scene.push(sceneObject);
       return sceneObject;
     },
-    addYAxis: function() {
+    addYAxis: function(opts) {
+      opts = opts || {
+        xBaseline: 0
+      };
       var axis = d3.axisLeft(yScale);
-      var axisG = annotationsGroup.append("g")
-          .attr("transform", "translate(" + xScale(0) + ",0)");
-      var sceneObject = {
+      var axisG = addGroupToLayer(opts, "annotations")
+          .attr("transform", "translate(" + xScale(opts.xBaseline) + ",0)");
+      var sceneObject = sceneObjectProto({
         group: axisG,
         axisObject: axis,
         update: function(transition) {
           return (transition ? axisG.transition().call(transition) : axisG).call(axis);
         }
-      };
+      });
       sceneObject.update();
       scene.push(sceneObject);
       return sceneObject;
@@ -422,7 +455,8 @@ export function create(div, width, height) {
         element: "circle",
         accessors: accessors,
         data: data,
-        setter: setPoints
+        setter: setPoints,
+        layer: accessors.layer
       });
     },
     addArrows: function(data, accessors) {
@@ -430,7 +464,8 @@ export function create(div, width, height) {
         element: "path",
         accessors: accessors,
         data: data,
-        setter: setArrows
+        setter: setArrows,
+        layer: accessors.layer
       });
     },
     addLines: function(data, accessors) {
@@ -438,7 +473,8 @@ export function create(div, width, height) {
         element: "line",
         accessors: accessors,
         data: data,
-        setter: setArrows
+        setter: setLines,
+        layer: accessors.layer
       });
     },
     addFunction: function(f, accessors) {
@@ -484,13 +520,12 @@ export function create(div, width, height) {
             .thresholds(scalarField.contourValues)(scalarField.scalarField);
         return contours;
       }
-
-      var group = sceneGroup.append("g");
+      var group = addGroupToLayer(accessors);
       var element = "path";
       group.selectAll(element).data(setContours())
         .enter()
         .append(element);
-      var sceneObject = {
+      var sceneObject = sceneObjectProto({
         group: group,
         accessors: accessors,
         update: function(transition) {
@@ -498,30 +533,36 @@ export function create(div, width, height) {
           var newScalarField = scalarField.scalarField;
           var newContourValues = scalarField.contourValues;
           var tweenField = new Float64Array(newScalarField);
+          // d3 threshold array have to be Array objects, not TypedArray objects.
+          var tweenContour = Array.prototype.slice(newContourValues);
 
           if (transition) {
-            return sel.transition().call(transition)
-              .attrTween("d", function(d, i) {
-                var node = this; // , i = d3.interpolateRgb(node.getAttribute("fill"), "blue");
+            var obj = {};
+            d3.select(obj).transition().call(transition)
+              .tween("attr.d", function(d, i) {
                 return function(t) {
-                  // INEFFICIENT AS EFFFF
                   blas.copy(newScalarField, tweenField);
                   blas.axby(1-t, oldScalarField, t, tweenField);
+
+                  blas.copy(newContourValues, tweenContour);
+                  blas.axby(1-t, oldContourValues, t, tweenContour);
+
                   var c = d3.contours()
                       .size(scalarField.dims)
-                      .thresholds([(1-t) * oldContourValues[i] + t * newContourValues[i]])(tweenField)[0];
-                  var path = contourPath(c);
+                      .thresholds(tweenContour)(tweenField);
 
-                  return path;
+                  sel.data(c).attr("d", contourPath);
                 };
               })
-              .attr("stroke", accessors.stroke || "black")
-              .attr("fill", accessors.fill || "none")
               .on("end", d => {
                 // inefficient since it's called many times, whatever.
                 oldScalarField = new Float64Array(newScalarField);
                 oldContourValues = new Float64Array(newContourValues);
               });
+
+            return sel.transition().call(transition)
+              .attr("stroke", accessors.stroke || "black")
+              .attr("fill", accessors.fill || "none");
           } else {
             var result = sel.call((function(accessors) {
               return function(sel) {
@@ -535,13 +576,13 @@ export function create(div, width, height) {
             return result;
           }
         }
-      };
+      });
       sceneObject.update();
       scene.push(sceneObject);
       return sceneObject;
     },
     addCurves: function(data, accessors) {
-      var group = sceneGroup.append("g");
+      var group = addGroupToLayer(accessors);
       group.selectAll("path")
         .data(data)
         .enter()
@@ -553,7 +594,7 @@ export function create(div, width, height) {
 
       var lineResolution = 250;
 
-      var sceneObject = {
+      var sceneObject = sceneObjectProto({
         group: group,
         accessors: accessors,
         update: function(transition) {
@@ -574,7 +615,7 @@ export function create(div, width, height) {
             .attr("fill", "none")
             .call(defaultAccessor(accessors, "custom", function() {}));
         }
-      };
+      });
       sceneObject.update();
       scene.push(sceneObject);
       return sceneObject;
