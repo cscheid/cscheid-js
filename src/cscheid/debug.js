@@ -33,3 +33,10 @@ export function assert(cond, msg) {
     die(msg);
 }
 
+/*
+ * Super ugly, but apparently the easiest way:
+ * https://stackoverflow.com/a/44355041
+ */
+export function expose(obj, name) {
+  window[name] = obj;
+}
