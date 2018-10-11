@@ -370,6 +370,7 @@ export function create(div, width, height) {
     // settings directly, they need to remember to call update().
     xScale: xScale,
     yScale: yScale,
+    classColorScale: colorScale,
 
     /*
      * render()     updates the scene without a transition

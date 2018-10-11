@@ -16,6 +16,10 @@ export function rotate(r) {
   return "rotate(" + r + ") ";
 }
 
+export var categoricalColorScheme = 
+  ["rgb(2, 195, 219)", "rgb(255, 200, 0)", "rgb(244, 68, 82)", 
+   "rgb(186, 216, 60)", "rgb(216, 145, 205)", "rgb(222, 222, 222)"];
+
 //////////////////////////////////////////////////////////////////////////
 // extra methods for the selection prototype
 
