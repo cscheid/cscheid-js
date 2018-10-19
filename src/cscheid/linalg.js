@@ -5,7 +5,6 @@ import * as blas from "./blas.js";
  * memory allocations.
  */
 
-
 /**
  * returns v1 + v2
  * @param {v1} input v1
@@ -58,4 +57,26 @@ export function scale(v, k) {
  */
 export function norm2(v) {
   return blas.dot(v, v);
+}
+
+/**
+ * returns the squared distance between v1 and v2
+ * @param {v1} input v1
+ * @param {v2} input v2
+ * @returns {Number} ||v1 - v2||_2^2
+ */
+export function distance2(v1, v2) {
+  return norm2(sub(v1, v2));
+}
+
+/**
+ * normalizes the passed vector v. This mutates v!
+ *
+ * @param {v} inout v
+ * @returns {Number} length of vector prior to normalization
+ */
+export function normalize(v) {
+  var n = Math.sqrt(blas.dot(v, v));
+  blas.scal(1.0/n, v);
+  return n;
 }

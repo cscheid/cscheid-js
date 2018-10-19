@@ -329,7 +329,7 @@ export function create(div, width, height) {
       if (cscheid.linalg.norm2(p) === 0) {
         a = 0;
       } else {
-        a = -Math.atan2(p[0], p[1]) * 180 / Math.PI;
+        a = -Math.atan2(p[1], p[0]) * 180 / Math.PI;
       }
       var x = xScale(d.p[0]);
       var y = yScale(d.p[1]);
