@@ -80,3 +80,41 @@ export function normalize(v) {
   blas.scal(1.0/n, v);
   return n;
 }
+
+/**
+ * multiplies a matrix by a vector. Assumes matrix
+ * is stored as an array of appropriately-sized row vectors
+ *
+ * @param {m} input the matrix m
+ * @param {v} input the vector v
+ * @returns {Float64Array} mv
+ */
+export function matVecMult(m, v) {
+  var result = new Float64Array(m.length);
+  for (var i=0; i<m.length; ++i) {
+    result[i] = blas.dot(m[i], v);
+  }
+  return result;
+}
+
+/**
+ * returns the transpose of a matrix. Assumes
+ * matrix is represented as an array of appropriately-sized row vectors
+ *
+ * @param {m} input the matrix m
+ * @returns {Float64Array} m^T
+ */
+export function matTranspose(m) {
+  var result = [];
+  var nrows = m.length;
+  var ncols = m[0].length;
+  var i, j;
+  for (i=0; i<ncols; ++i)
+    result.push(new Float64Array(nrows));
+  for (j=0; j<ncols; ++j) {
+    for (i=0; i<nrows; ++i) {
+      result[j][i] = m[i][j];
+    }
+  }
+  return result;
+}

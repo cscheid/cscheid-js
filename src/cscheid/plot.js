@@ -263,10 +263,10 @@ export function create(div, width, height) {
       colorAccessor = function() { return "black"; };
     }
     return function(sel) {
-      sel.attr("cx", function(d,i) { return xScale(accessors.x(d,i)); })
-        .attr("cy", function(d,i) { return yScale(accessors.y(d,i)); })
+      sel.attr("cx",  function(d,i) { return xScale(accessors.x(d,i)); })
+        .attr("cy",   function(d,i) { return yScale(accessors.y(d,i)); })
         .attr("fill", function(d,i) { return colorAccessor(d,i); })
-        .attr("r", function(d,i) { return radiusAccessor(d,i); })
+        .attr("r",    function(d,i) { return radiusAccessor(d,i); })
         .call(accessors.custom || function() {})
       ;
     };
@@ -275,10 +275,10 @@ export function create(div, width, height) {
   function setLines(accessors) {
     var strokeAccessor = defaultAccessor(accessors, "stroke", "black");
     return function(sel) {
-      sel.attr("x1", function(d,i)  { return xScale(accessors.x1(d,i)); })
-        .attr("x2", function(d,i) { return xScale(accessors.x2(d,i)); })
-        .attr("y1", function(d,i) { return yScale(accessors.y1(d,i)); })
-        .attr("y2", function(d,i) { return yScale(accessors.y2(d,i)); })
+      sel.attr("x1",    function(d,i) { return xScale(accessors.x1(d,i)); })
+        .attr("x2",     function(d,i) { return xScale(accessors.x2(d,i)); })
+        .attr("y1",     function(d,i) { return yScale(accessors.y1(d,i)); })
+        .attr("y2",     function(d,i) { return yScale(accessors.y2(d,i)); })
         .attr("stroke", function(d,i) { return strokeAccessor(d,i); })
         .call(accessors.custom || function() {});
     };

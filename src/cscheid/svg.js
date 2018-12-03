@@ -23,31 +23,34 @@ export var categoricalColorScheme =
 //////////////////////////////////////////////////////////////////////////
 // extra methods for the selection prototype
 
-// http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-the-front-with-d3
-d3.selection.prototype.moveToFront = function() {
-  return this.each(function(){
-    this.parentNode.appendChild(this);
-  });
-};
+if (d3 !== undefined) {
+  // http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-the-front-with-d3
+  d3.selection.prototype.moveToFront = function() {
+    return this.each(function(){
+      this.parentNode.appendChild(this);
+    });
+  };
 
-// http://bl.ocks.org/eesur/4e0a69d57d3bfc8a82c2
-d3.selection.prototype.moveToBack = function() {
-  return this.each(function() {
-    var firstChild = this.parentNode.firstChild;
-    if (firstChild) {
-      this.parentNode.insertBefore(this, firstChild);
-    }
-  });
-};
+  // http://bl.ocks.org/eesur/4e0a69d57d3bfc8a82c2
+  d3.selection.prototype.moveToBack = function() {
+    return this.each(function() {
+      var firstChild = this.parentNode.firstChild;
+      if (firstChild) {
+        this.parentNode.insertBefore(this, firstChild);
+      }
+    });
+  };
 
-d3.selection.prototype.callReturn = function(callable)
-{
-  return callable(this);
-};
+  d3.selection.prototype.callReturn = function(callable)
+  {
+    return callable(this);
+  };
 
-d3.selection.prototype.enterMany = function(data)
-{
-  return this.selectAll(".c :not(.c)")
-    .data(data)
-    .enter();
-};
+  d3.selection.prototype.enterMany = function(data)
+  {
+    return this.selectAll(".c :not(.c)")
+      .data(data)
+      .enter();
+  };
+}
+
