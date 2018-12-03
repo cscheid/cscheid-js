@@ -78,7 +78,7 @@ export function nearestNeighbors2D(quadtree, queryPoint, k)
   return result;
 }
 
-function classifyFromNNs(nns)
+export function classifyFromNNs(nns)
 {
   let histogram = {};
   nns.forEach(d => {
