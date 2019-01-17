@@ -1,6 +1,7 @@
 import * as cscheid from "../cscheid.js";
 
 // BLAS-like basic linear algebra stuff
+// emphasis on "like": many non-BLAS things here
 
 //////////////////////////////////////////////////////////////////////////
 // level 1 blas

@@ -118,3 +118,13 @@ export function matTranspose(m) {
   }
   return result;
 }
+
+export function elementMul(v1, v2) {
+  var n = v1.length;
+  var result = new Float64Array(n);
+  var i;
+  for (i=0; i<n; ++i) {
+    result[i] = v1[i] * v2[i];
+  }
+  return result;
+}

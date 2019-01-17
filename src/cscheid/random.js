@@ -63,6 +63,16 @@ distributions.gaussian1D = function(mu, sigma) {
   return distributions.transform(normalVariate, v => mu + sigma * v);
 };
 
+// axis-aligned variances only for now..
+distributions.gaussian2D = function(mu, sigma) {
+  var n = mu.length;
+  var vecGen = distributions.iidVec(normalVariate, n);
+  return function() {
+    var normalVariate = vecGen();
+    return cscheid.linalg.add(mu, cscheid.linalg.elementMul(normalVariate, sigma));
+  };
+};
+
 // assumes dist is numeric
 distributions.iidVec = function(dist, k) {
   return function () {
