@@ -76,3 +76,14 @@ export function upperBound(lst, target)
     return 0;
   return lo;
 }
+
+export function histogram(lst, funP)
+{
+  let fun = funP ? funP : (d => d);
+  let result = new Map();
+  lst.forEach(k => {
+    let v = result.get(k) || 0;
+    result.set(k, v + 1);
+  });
+  return result;
+}
