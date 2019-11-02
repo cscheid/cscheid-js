@@ -202,7 +202,18 @@ export function surface(opts)
 //////////////////////////////////////////////////////////////////////////////
 // A 2D plotting library
 
-export function create(div, width, height) {
+export function create(div, width, height, opts) {
+  opts = cscheid.object.defaults(opts, {
+    xScale: d3.scaleLinear,
+    yScale: d3.scaleLinear
+  });
+  if (typeof width !== "number")
+    throw new Error("Expected width to be number");
+  if (typeof height !== "number")
+    throw new Error("Expected height to be number");
+  if (div.nodes().length === 0) {
+    console.warn("WARNING: cscheid.plot.create() called with empty selection");
+  }
   var dims = { width: width, height: height };
   var margins = { top: 10, bottom: 10, left: 10, right: 10 };
   var svg = div.append("svg")
@@ -217,6 +228,8 @@ export function create(div, width, height) {
   };
 
   function addGroupToLayer(opts, defaultLayer) {
+    if (opts.group)
+      return opts.group;
     var layer = opts.layer || defaultLayer || "scene";
     return layers[layer].append("g");
   }
@@ -235,19 +248,33 @@ export function create(div, width, height) {
     }, opts);
   }
 
-  var xScale = d3.scaleLinear().range([margins.left, dims.width - margins.right]);
-  var yScale = d3.scaleLinear().range([dims.height - margins.bottom, margins.top]);
+  var xScale = opts.xScale().range([margins.left, dims.width - margins.right]);
+  var yScale = opts.yScale().range([dims.height - margins.bottom, margins.top]);
   var scene = [];
 
   var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
-  function defaultAccessor(accessors, key, value) {
-    if (accessors[key])
+  function defaultAccessor(accessors, key, defaultValue) {
+    if (!accessors[key])
+      return function() { return defaultValue; };
+    if (typeof accessors[key] === "function")
       return accessors[key];
     else
-      return function() { return value; };
+      return function() { return accessors[key]; };
   }
 
+  function setPaths(accessors) {
+    return function(sel) {
+      for (var key in accessors) {
+        if (key !== "custom") {
+          sel.attr(key, accessors[key]);
+        } else {
+          sel.call(accessors.custom);
+        }
+      }
+    };
+  }
+  
   function setPoints(accessors) {
     var colorAccessor;
     var radiusAccessor = defaultAccessor(accessors, "r", 2);
@@ -263,27 +290,55 @@ export function create(div, width, height) {
       colorAccessor = function() { return "black"; };
     }
     return function(sel) {
-      sel.attr("cx",  function(d,i) { return xScale(accessors.x(d,i)); })
-        .attr("cy",   function(d,i) { return yScale(accessors.y(d,i)); })
-        .attr("fill", function(d,i) { return colorAccessor(d,i); })
+      if (accessors.x)
+        sel.attr("cx",  function(d,i) { return xScale(accessors.x(d,i)); });
+      if (accessors.y)
+        sel.attr("cy",   function(d,i) { return yScale(accessors.y(d,i)); });
+      sel.attr("fill", function(d,i) { return colorAccessor(d,i); })
         .attr("r",    function(d,i) { return radiusAccessor(d,i); })
-        .call(accessors.custom || function() {})
-      ;
+        .call(accessors.custom || function() {});
     };
   }
 
   function setLines(accessors) {
     var strokeAccessor = defaultAccessor(accessors, "stroke", "black");
     return function(sel) {
-      sel.attr("x1",    function(d,i) { return xScale(accessors.x1(d,i)); })
-        .attr("x2",     function(d,i) { return xScale(accessors.x2(d,i)); })
-        .attr("y1",     function(d,i) { return yScale(accessors.y1(d,i)); })
-        .attr("y2",     function(d,i) { return yScale(accessors.y2(d,i)); })
-        .attr("stroke", function(d,i) { return strokeAccessor(d,i); })
-        .call(accessors.custom || function() {});
+      if (accessors.x1)
+        sel.attr("x1",    function(d,i) { return xScale(accessors.x1(d,i)); });
+      if (accessors.x2)
+        sel.attr("x2",    function(d,i) { return xScale(accessors.x2(d,i)); });
+      if (accessors.y1)
+        sel.attr("y1",    function(d,i) { return yScale(accessors.y1(d,i)); });
+      if (accessors.y2)
+        sel.attr("y2",    function(d,i) { return yScale(accessors.y2(d,i)); });
+      if (accessors.stroke)
+        sel.attr("stroke", strokeAccessor);
+      sel.call(accessors.custom || function() {});
     };
   }
 
+  function setText(accessors) {
+    var fillAccessor = defaultAccessor(accessors, "fill", "black");
+    var textAccessor = defaultAccessor(accessors, "text", "");
+    return function(sel) {
+      if (accessors.x)
+        sel.attr("x",   function(d, i) { return xScale(accessors.x(d, i)); });
+      if (accessors.y)
+        sel.attr("y",   function(d, i) { return yScale(accessors.y(d, i)); });
+      if (accessors.fill)
+        sel.attr("fill", fillAccessor);
+      if (accessors.text)
+        sel.text(function(d, i) { return textAccessor(d, i); });
+      sel.call(accessors.custom || function() {});
+    };
+  }
+
+  function setGroup(accessors) {
+    return function(sel) {
+      sel.call(accessors.custom || function() {});
+    };
+  }
+  
   // FIXME: arrows will be drawn really weirdly if chart aspect ratio
   // doesn't match scale ratios (that is, you need the same units for x
   // and y in the range)
@@ -408,56 +463,126 @@ export function create(div, width, height) {
       result.render();
     },
 
+    addGroupToLayer: addGroupToLayer,
+    
     //////////////////////////////////////////////////////////////////
     // annotations
-
+    
     addXAxis: function(opts) {
-      opts = opts || {
-        yBaseline: 0
+      opts = cscheid.object.defaults(opts, {
+        yBaseline: Math.min.apply(null, yScale.domain()),
+        orientation: "bottom"
+      });
+      var axisFuns = {
+        "bottom": d3.axisBottom,
+        "top": d3.axisTop
       };
-      var axis = d3.axisBottom(xScale);
-      var axisG = addGroupToLayer(opts, "annotations")
+      var axis = axisFuns[opts.orientation](xScale);
+      if (opts.ticks !== undefined)
+        axis.ticks(opts.ticks);
+      var axisP = addGroupToLayer(opts, "annotations")
           .attr("transform", "translate(0," + yScale(opts.yBaseline) + ")");
+      var axisG = axisP.append("g");
+      var axisTitleG = axisP.append("g");
       var sceneObject = sceneObjectProto({
         group: axisG,
+        titleGroup: axisTitleG,
         axisObject: axis,
         update: function(transition) {
           return (transition ? axisG.transition().call(transition) : axisG).call(axis);
-        }
+        },
       });
+      if (opts.title) {
+        axisTitleG
+          .append("text")
+          .text(opts.title)
+          .attr("x", d3.mean(xScale.range()))
+          .attr("y", axis.orientation === "bottom" ? -15 : 15)
+          .attr("dominant-baseline", "hanging")
+          .call(cscheid.css.centerHorizontalText);
+      }
       sceneObject.update();
       scene.push(sceneObject);
       return sceneObject;
     },
     addYAxis: function(opts) {
-      opts = opts || {
-        xBaseline: 0
+      opts = cscheid.object.defaults(opts, {
+        xBaseline: Math.min.apply(null, xScale.domain()),
+        orientation: "left"
+      });
+      var axisFuns = {
+        "left": d3.axisLeft,
+        "right": d3.axisRight
       };
-      var axis = d3.axisLeft(yScale);
-      var axisG = addGroupToLayer(opts, "annotations")
+      var axis = axisFuns[opts.orientation](yScale);
+      if (opts.ticks !== undefined)
+        axis.ticks(opts.ticks);
+      var axisP = addGroupToLayer(opts, "annotations")
           .attr("transform", "translate(" + xScale(opts.xBaseline) + ",0)");
+      var axisG = axisP.append("g");
+      var axisTitleG = axisP.append("g");
       var sceneObject = sceneObjectProto({
         group: axisG,
+        titleGroup: axisTitleG,
         axisObject: axis,
         update: function(transition) {
           return (transition ? axisG.transition().call(transition) : axisG).call(axis);
         }
       });
+      if (opts.title) {
+        axisTitleG
+          .append("text")
+          .text(opts.title)
+          .attr("x", axis.orientation === "left" ? 30 : -30)
+          .attr("y", d3.mean(yScale.range()))
+          .call(cscheid.css.centerVerticalText);
+      }
       sceneObject.update();
       scene.push(sceneObject);
       return sceneObject;
     },
 
     //////////////////////////////////////////////////////////////////
+    // clipping path
+
+    addClipPath: function() {
+      return svg.append("clipPath");
+    },
+
+    addAxisClipPath: function() {
+      var result = this.addClipPath();
+      result
+        // come, ye random bits, and deliver us from hurt
+        .attr("id", "clip-path-" + String(Math.random()).slice(2,10))
+        .append("rect")
+        .attr("width", Math.abs(xScale.range()[1] - xScale.range()[0]))
+        .attr("x", Math.min.apply(null, xScale.range()))
+        .attr("height", Math.abs(yScale.range()[1] - yScale.range()[0]))
+        .attr("y", Math.min.apply(null, yScale.range()));
+      return result;
+    },
+
+    //////////////////////////////////////////////////////////////////
     // marks
 
+    addPaths: function(data, accessors) {
+      return createSceneObject({
+        element: "path",
+        accessors: accessors,
+        data: data,
+        setter: setPaths,
+        layer: accessors.layer,
+        group: accessors.group
+      });
+    },
     addPoints: function(data, accessors) {
       return createSceneObject({
         element: "circle",
         accessors: accessors,
         data: data,
         setter: setPoints,
-        layer: accessors.layer
+        layer: accessors.layer,
+        group: accessors.group
       });
     },
     addArrows: function(data, accessors) {
@@ -466,7 +591,8 @@ export function create(div, width, height) {
         accessors: accessors,
         data: data,
         setter: setArrows,
-        layer: accessors.layer
+        layer: accessors.layer,
+        group: accessors.group
       });
     },
     addLines: function(data, accessors) {
@@ -475,7 +601,28 @@ export function create(div, width, height) {
         accessors: accessors,
         data: data,
         setter: setLines,
-        layer: accessors.layer
+        layer: accessors.layer,
+        group: accessors.group
+      });
+    },
+    addText: function(data, accessors) {
+      return createSceneObject({
+        element: "text",
+        accessors: accessors,
+        data: data,
+        setter: setText,
+        layer: accessors.layer,
+        group: accessors.group
+      });
+    },
+    addGroup: function(data, accessors) {
+      return createSceneObject({
+        element: "g",
+        accessors: accessors,
+        data: data,
+        setter: setGroup,
+        layer: accessors.layer,
+        group: accessors.group
       });
     },
     addFunction: function(f, accessors) {
@@ -563,13 +710,20 @@ export function create(div, width, height) {
 
             return sel.transition().call(transition)
               .attr("stroke", accessors.stroke || "black")
-              .attr("fill", accessors.fill || "none");
+              .attr("fill", accessors.fill || "none")
+              .attr("stroke-dasharray", accessors["stroke-dasharray"] || null)
+              .attr("stroke-dashoffset", accessors["stroke-dashoffset"] || null)
+              .style("stroke-width", accessors["stroke-width"] || null)
+            ;
           } else {
             var result = sel.call((function(accessors) {
               return function(sel) {
                 sel.attr("d", contourPath)
                   .attr("stroke", accessors.stroke || "black")
-                  .attr("fill", accessors.fill || "none");
+                  .attr("fill", accessors.fill || "none")
+                  .attr("stroke-dasharray", accessors["stroke-dasharray"] || null)
+                  .attr("stroke-dashoffset", accessors["stroke-dashoffset"] || null)
+                  .style("stroke-width", accessors["stroke-width"] || null);
               };
             })(this.accessors));
             oldScalarField = new Float64Array(newScalarField);
@@ -582,6 +736,7 @@ export function create(div, width, height) {
       scene.push(sceneObject);
       return sceneObject;
     },
+    // FIXME: this method really only makes sense for functions.
     addCurves: function(data, accessors) {
       var group = addGroupToLayer(accessors);
       group.selectAll("path")

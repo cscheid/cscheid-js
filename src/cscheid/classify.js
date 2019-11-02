@@ -1,4 +1,10 @@
 import * as cscheid from "../cscheid.js";
+import * as svm from "./classify/svm.js";
+
+export function svmTrain(data, lambda, learningRate)
+{
+  return svm.svmTrain(data, lambda, learningRate);
+}
 
 export function nearestNeighbors(data, queryPoint, k)
 {

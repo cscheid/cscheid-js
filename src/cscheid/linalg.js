@@ -128,3 +128,17 @@ export function elementMul(v1, v2) {
   }
   return result;
 }
+
+/**
+ * subtracts the row-wise average from every row. in other words, this
+ * centers each column in the matrix
+ */
+export function centerColumns(m) {
+  var n = m.length;
+  var z = new Float64Array(m[0].length);
+  m.forEach(r => {
+    blas.axpy(1/n, r, z);
+  });
+  return m.map(r => sub(r, z));
+}
+

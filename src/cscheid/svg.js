@@ -16,6 +16,36 @@ export function rotate(r) {
   return "rotate(" + r + ") ";
 }
 
+export function useClipPath(clipEl)
+{
+  return function(sel) {
+    var id = clipEl.attr("id");
+    sel.attr("clip-path", `url(#${id})`);
+  };
+}
+
+// use this when you need to rotate an object around
+// its own position. (useful for text, for example)
+//
+// call it like this:
+// .attr("transform", cscheid.svg.centeredTextRotate(-90))
+
+export function centeredTextRotate(r)
+{
+  return centeredRotate(
+    function(d) { return this.getAttribute("x") || 0; },
+    function(d) { return this.getAttribute("y") || 0; },
+    r);
+}
+
+export function centeredRotate(xAccessor, yAccessor, r) {
+  return function(d) {
+    var x = xAccessor.call(this, d);
+    var y = yAccessor.call(this, d);
+    return `rotate(${r}, ${x}, ${y})`;
+  };
+}
+
 export var categoricalColorScheme = 
   ["rgb(2, 195, 219)", "rgb(255, 200, 0)", "rgb(244, 68, 82)", 
    "rgb(186, 216, 60)", "rgb(216, 145, 205)", "rgb(222, 222, 222)"];
