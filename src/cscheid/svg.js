@@ -6,14 +6,18 @@ export function translateVec(v) {
 
 export function translate(x, y) {
   if (y === undefined) {
-    return "translate(" + x.x + ", " + x.y + ") ";
+    return `translate(${x.x}, ${x.y})`;
   } else {
-    return "translate(" + x + ", " + y + ") ";
+    return `translate(${x}, ${y})`;
   }
 }
 
-export function rotate(r) {
-  return "rotate(" + r + ") ";
+export function rotate(r, x, y) {
+  if (x === undefined) {
+    return `rotate(${r})`;
+  } else {
+    return `rotate(${r}, ${x}, ${y})`;
+  }
 }
 
 export function useClipPath(clipEl)
