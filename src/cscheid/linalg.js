@@ -102,7 +102,7 @@ export function matVecMult(m, v) {
  * matrix is represented as an array of appropriately-sized row vectors
  *
  * @param {m} input the matrix m
- * @returns {Float64Array} m^T
+ * @returns {Array[Float64Array]} m^T
  */
 export function matTranspose(m) {
   var result = [];
@@ -119,6 +119,13 @@ export function matTranspose(m) {
   return result;
 }
 
+/** 
+ * returns the elementwise product of two vectors
+ *
+ * @param {v1} input v1
+ * @param {v2} input v2
+ * @returns {Array[Float64Array]} v_i = ( v1_i * v2_i )
+ */
 export function elementMul(v1, v2) {
   var n = v1.length;
   var result = new Float64Array(n);
@@ -132,6 +139,9 @@ export function elementMul(v1, v2) {
 /**
  * subtracts the row-wise average from every row. in other words, this
  * centers each column in the matrix
+ *
+ * @param {m} input the matrix m
+ * @returns {Array[Float64Array]} centered matrix
  */
 export function centerColumns(m) {
   var n = m.length;
