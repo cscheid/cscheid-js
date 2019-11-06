@@ -2,6 +2,12 @@ import * as cscheid from "../cscheid.js";
 
 export var eps = 1e-6;
 
+/**
+ * executes function with a different epsilon value
+ *
+ * @param {thisEps} input epsilon value with which to run function
+ * @param {f} input function to run
+ */
 export function withEps(thisEps, f) {
   var oldEps = eps;
   try {
@@ -12,16 +18,48 @@ export function withEps(thisEps, f) {
   }
 }
 
+/**
+ * returns true if v is inside an eps-ball around zero
+ * (if absolute "error" is below eps)
+ *
+ * @param {v} input value to check
+ * @returns {bool} whether or not value is inside eps-ball
+ */
 export function withinEps(v) {
   return Math.abs(v) < eps;
 }
 
+/**
+ * returns true if v1 and v2 fit inside an (eps/2 * (|v1| + |v2|))-ball
+ * of one another.
+ *
+ * @param {v1} input v1
+ * @param {v2} input v2
+ * @returns {bool} whether v1 and v2 are "relative-within" eps of one another
+ */
 export function withinEpsRel(v1, v2) {
-  return Math.abs(v1 - v2) / Math.abs(v1 + v2) < eps;
+  let dv = Math.abs(v1 - v2);
+  let diameter = eps * (Math.abs(v1) + Math.abs(v2));
+  return dv < diameter;
 }
 
-// numerics sucks.
+/**
+ * returns the two roots of the quadratic system a x^2 + b x + c = 0
+ * this assumes real solutions exist.
+ *
+ * This uses a naive formula to evaluate the discriminant, and
+ * a slightly less naive formula that avoids cancellation
+ * between b^2 and discriminant
+ *
+ * In other words, expect instability if discriminant is near 0.
+ *
+ * @param {a} input a
+ * @param {b} input b
+ * @param {c} input c
+ * @return {Object} object o such that o.root1 and o.root2 are both roots of quadratic
+ */
 export function quadratic(a, b, c) {
+  // numerics is hard.
   if (a === 0)
     return { root1: -c/b, root2: -c/b };
   if (b === 0 && c === 0) {
@@ -43,7 +81,17 @@ export function quadratic(a, b, c) {
   }
 }
 
-// bisection search for root-finding
+/**
+ * finds one root of f, given a bracket in [lo, up]: 
+ *   either f(lo) < 0 and f(hi) > 0 or f(lo) > 0 and f(hi) < 0
+ *
+ * @param {f} input function to evaluate, Number -> Number
+ * @param {lo} input lower bound of bracket
+ * @param {up} input upper bound of bracket
+ * @returns {Object} returns midpoint of bracketing interval with
+ * length < eps (o.v) and the value of the function evaluated there
+ * (o.fV)
+ */
 export function findRoot(f, lo, up) {
   if (up <= lo)
     throw new Error("Expected up > lo.");
@@ -69,6 +117,18 @@ export function findRoot(f, lo, up) {
   return { v: mid, fV: fMid };
 }
 
+/**
+ * finds extremum of function using golden section search.
+ *
+ * @param {f} input function to evaluate, Number -> Number
+ * @param {lo} input lower bound of bracket
+ * @param {mid} input some point inside the bracket
+ * @param {up} input upper bound of bracket
+ * @returns {Object} 
+ *   - o.v: midpoint of extremum bracket with width < eps; 
+ *   - o.fV: function value at extremum; 
+ *   - o.type: "minimum" or "maximum"
+ */
 export function findExtremum(f, lo, mid, up) {
   if (up <= mid)
     throw new Error("Expected up > mid.");
@@ -129,16 +189,41 @@ export function findExtremum(f, lo, mid, up) {
     //     }
     // }
   }
+  return {
+    v: mid,
+    fV: fMid,
+    type: ["maximum", "minimum"][mode]
+  };
 }
 
+/**
+ * convert degrees to radians
+ *
+ * @param {d} input value in degrees
+ * @returns {Number} value in radians
+ */
 export function radians(d) {
   return d * (Math.PI/180);
 }
 
+/**
+ * convert radians to degrees
+ *
+ * @param {r} input value in radians
+ * @returns {Number} value in degrees
+ */
 export function degrees(r) {
   return r / (Math.PI/180);
 }
 
+/**
+ * returns (n choose k), the binomial coefficients with indices n and k
+ *   n!/(k! (n - k)!)
+ *
+ * @param {n} input n
+ * @param {k} input k
+ * @returns {Number} n!/(k! (n - k)!)
+ */
 export function choose(n, k) {
   k = Math.min(k, n-k);
   var result = 1;
@@ -150,6 +235,12 @@ export function choose(n, k) {
   return result;
 }
 
+/**
+ * returns n! = 1 * 2 * ... * n
+ *
+ * @param {n} input n
+ * @returns {Number} n!
+ */
 export function fact(n) {
   var result = 1;
   for (var i=1; i<=n; ++i)
