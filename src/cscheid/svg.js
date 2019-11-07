@@ -1,9 +1,23 @@
 import * as cscheid from "../cscheid.js";
 
+/**
+ * Returns a CSS transform string corresponding to the translation by v.x, v.y
+ *
+ * @param {v} input the vector
+ * @returns {String} the CSS transform string
+ */
 export function translateVec(v) {
   return translate(v.x, v.y);
 }
 
+/**
+ * Returns a CSS transform string corresponding to the translation by x and y
+ * If given a vector object, returns the string corresponding to v.x, v.y
+ *
+ * @param {v or x} input either the vector or the x coordinate
+ * @param {y} input the x coordinate
+ * @returns {String} the CSS transform string
+ */
 export function translate(x, y) {
   if (y === undefined) {
     return `translate(${x.x}, ${x.y})`;
@@ -12,6 +26,15 @@ export function translate(x, y) {
   }
 }
 
+/**
+ * Returns a CSS transform string corresponding to the rotation by r degrees
+ * If given parameters x and y, the rotation is performed around (x, y)
+ *
+ * @param {r} input rotation amount
+ * @param {x} input if present, rotate around this x coordinate
+ * @param {y} input if present, rotate around this y coordinate
+ * @returns {String} the CSS transform string
+ */
 export function rotate(r, x, y) {
   if (x === undefined) {
     return `rotate(${r})`;
