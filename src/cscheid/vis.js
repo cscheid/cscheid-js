@@ -43,25 +43,21 @@ export function grandTour(d)
 //////////////////////////////////////////////////////////////////////////////
 // Classical MDS
 //
-// HACKKKKKKK ALERT
-// This assumes that you have imported
-//  <script src="https://unpkg.com/svd-js" type="application/javascript"></script>
-// 
-
 // this expects squared distances or inner products!
 export function CMDS(m)
 {
-  let SVD = window.SVDJS.SVD; // yeah, i know.
+  let SVD = cscheid.linalg.svd;
   let t = cscheid.linalg.matTranspose;
   let sz = m.length;
-  function subtractRowAvg(m) {
-    let avg = new Float64Array(sz);
-    m.forEach(function(r) {
-      avg = cscheid.linalg.add(avg, r);
-    });
-    avg = cscheid.linalg.scale(avg, 1/sz);
-    return m.map(function(r) { return cscheid.linalg.sub(r, avg); });
-  }
+  let subtractRowAvg = cscheid.linalg.centerColumns;
+  // function subtractRowAvg(m) {
+  //   let avg = new Float64Array(sz);
+  //   m.forEach(function(r) {
+  //     avg = cscheid.linalg.add(avg, r);
+  //   });
+  //   avg = cscheid.linalg.scale(avg, 1/sz);
+  //   return m.map(function(r) { return cscheid.linalg.sub(r, avg); });
+  // }
   m = t(subtractRowAvg(m));
   m = t(subtractRowAvg(m));
   m = m.map(function(r) { return cscheid.linalg.scale(r, -1/2); });
