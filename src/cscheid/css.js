@@ -1,4 +1,4 @@
-import centeredTextRotate from "./svg.js";
+import { centeredTextRotate } from "./svg.js";
 
 /**
  * Centers text horizontally
