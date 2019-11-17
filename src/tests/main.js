@@ -1,5 +1,9 @@
 import * as cscheid from "../cscheid.js";
+import * as test from "./test_all.js";
+
 window.cscheid = cscheid;
+
+test.runTests();
 
 //////////////////////////////////////////////////////////////////////////////
 // krylov
@@ -40,15 +44,20 @@ function generateRandomArray(size, elSize)
   for (var i=0; i<n; ++i) {
     result.push(~~(Math.random() * elSize));
   }
+  return result;
 }
 
 function testArrayConcatAssociative(a, b, c)
 {
   var v1 = cscheid.array.concat([a, b]),
       v2 = cscheid.array.concat([b, c]);
-  assert(cscheid.array.concat([a, v2]) === cscheid.array.concat([v1, c]));
-  assert(cscheid.array.concat([a, v2]) === cscheid.array.concat([a, b, c]));
-  assert(cscheid.array.concat([a, b, c]) === cscheid.array.concat([v1, c]));
+  var av2 = cscheid.array.concat([a, v2]),
+      v1c = cscheid.array.concat([v1, c]),
+      abc = cscheid.array.concat([a, b, c]);
+
+  av2.forEach((v, i) => assert(v === v1c[i]));
+  av2.forEach((v, i) => assert(v === abc[i]));
+  abc.forEach((v, i) => assert(v === v1c[i]));
 }
 
 function testArrayConcat()

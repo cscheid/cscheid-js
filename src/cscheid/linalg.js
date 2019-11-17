@@ -1,4 +1,5 @@
 import * as blas from "./blas.js";
+import * as cscheid from "../cscheid.js";
 
 /**
  * higher-level linalg interface that doesn't care too much about
@@ -51,6 +52,100 @@ export function scale(v, k) {
 }
 
 /**
+ * returns a * b
+ * @param {a} input a, m x k
+ * @param {b} input b, k x n
+ * @param {transa} input if true, use a^T instead of a
+ * @param {transb} input if true, use b^T instead of b
+ * 
+ * @returns {list[Float64Array]} a * b, m x n
+ */
+export function matMatMul(a, b, transa, transb) {
+  // we've paid no attention to cache locality...
+  let result = [];
+  let i, j, l;
+  let k, m, n;
+  
+  if (!transa && !transb) {
+    m = a.length;
+    k = b.length;
+    n = b[0].length;
+    if (a[0].length !== k) {
+      throw new Error("Matrix dimensions do not match");
+    }
+    for (i=0; i<m; ++i) {
+      result.push(new Float64Array(n));
+    }
+    for (i=0; i<m; ++i) {
+      for (j=0; j<n; ++j) {
+        for (l=0; l<k; ++l) {
+          result[i][j] += a[i][l] * b[l][j];
+        }
+      }
+    }
+  } else if (transa && !transb) {
+    // a^T is k x m
+    // b   is k x n
+    m = a[0].length;
+    k = a.length;
+    n = b[0].length;
+    if (b.length !== k) {
+      throw new Error("Matrix dimensions do not match");
+    }
+    for (i=0; i<m; ++i) {
+      result.push(new Float64Array(n));
+    }
+    for (i=0; i<m; ++i) {
+      for (j=0; j<n; ++j) {
+        for (l=0; l<k; ++l) {
+          result[i][j] += a[l][i] * b[l][j];
+        }
+      }
+    }
+  } else if (!transa && transb) {
+    // a   is m x k
+    // b^T is n x k
+    m = a.length;
+    k = a[0].length;
+    n = b.length;
+    if (b[0].length !== k) {
+      throw new Error("Matrix dimensions do not match");
+    }
+    for (i=0; i<m; ++i) {
+      result.push(new Float64Array(n));
+    }
+    for (i=0; i<m; ++i) {
+      for (j=0; j<n; ++j) {
+        for (l=0; l<k; ++l) {
+          result[i][j] += a[i][l] * b[j][l];
+        }
+      }
+    }
+  } else {
+    // transa && transb
+    // a^T is k x m
+    // b^T is n x k
+    m = a[0].length;
+    k = a.length;
+    n = b.length;
+    if (b[0].length !== k) {
+      throw new Error("Matrix dimensions do not match");
+    }
+    for (i=0; i<m; ++i) {
+      result.push(new Float64Array(n));
+    }
+    for (i=0; i<m; ++i) {
+      for (j=0; j<n; ++j) {
+        for (l=0; l<k; ++l) {
+          result[i][j] += a[l][i] * b[j][l];
+        }
+      }
+    }
+  }
+  return result;
+}
+
+/**
  * returns the squared 2-norm of v
  * @param {v} input v
  * @returns {Number} ||v||_2^2
@@ -67,6 +162,26 @@ export function norm2(v) {
  */
 export function distance2(v1, v2) {
   return norm2(sub(v1, v2));
+}
+
+/**
+ * true if v1 and v2 are relatively close to one another:
+ * if their distance is inside (eps/2 * (|v1|^2 + |v2|^2))-ball
+ *
+ * NOTE: Unclear to me right now if we should take square of eps
+ * instead...
+ *
+ * @param {v1} input v1
+ * @param {v2} input v2
+ * @returns {bool} whether v1 and v2 are "relatively-within" eps of
+ * one another
+ */
+export function vecWithinEpsRel(v1, v2) {
+  let n1 = norm2(v1),
+      n2 = norm2(v2),
+      d = distance2(v1, v2);
+  let diameter = cscheid.math.eps * (n1 + n2);
+  return d < diameter;
 }
 
 /**
@@ -97,6 +212,37 @@ export function matVecMult(m, v) {
   return result;
 }
 
+export function matVecMul(a, v, transm) {
+  // a is m x n
+  let result, i, j, m, n;
+  m = a.length;
+  n = a[0].length;
+  if (!transm) {
+    // a is m x n
+    // v has n entries
+    if (v.length !== n) {
+      throw new Error("Matrix and vector have incompatible sizes");
+    }
+    result = new Float64Array(m);
+    for (i = 0; i < a.length; ++i) {
+      result[i] = blas.dot(a[i], v);
+    }
+  } else {
+    // a^T is n x m
+    // v   has m entries
+    if (v.length !== m) {
+      throw new Error("Matrix and vector have incompatible sizes");
+    }
+    result = new Float64Array(n);
+    for (i = 0; i < m; ++i) {
+      for (j = 0; j < n; ++j) {
+        result[j] += a[i][j] * v[i];
+      }
+    }
+  }
+  return result;
+}
+
 /**
  * returns the transpose of a matrix. Assumes
  * matrix is represented as an array of appropriately-sized row vectors
@@ -104,7 +250,7 @@ export function matVecMult(m, v) {
  * @param {m} input the matrix m
  * @returns {Array[Float64Array]} m^T
  */
-export function matTranspose(m) {
+export function transpose(m) {
   var result = [];
   var nrows = m.length;
   var ncols = m[0].length;

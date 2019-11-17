@@ -48,20 +48,22 @@ export function leastSquaresLFS(data, space, lambda, normalize)
     matrix.push(row);
   }
 
-  var s = numeric.svd(matrix);
+  var s = cscheid.linalg.svd(matrix);
+  // var s = numeric.svd(matrix);
 
   // horrible, horrible. FIXME: don't make a diagonal matrix.
-  var sigmaInv = numeric.diag(s.S);
+  // var sigmaInv = numeric.diag(s.S);
   var effdf = 0;
   for (i=0; i<=degree; ++i) {
-    effdf += Math.pow(sigmaInv[i][i], 2) / (Math.pow(sigmaInv[i][i], 2) + lambda);
-    sigmaInv[i][i] = 1.0 / (sigmaInv[i][i] + lambda);
+    effdf += Math.pow(s.q[i], 2) / (Math.pow(s.q[i], 2) + lambda);
+    s.q[i] = 1.0 / (s.q[i] + lambda);
+    // sigmaInv[i][i] = 1.0 / (sigmaInv[i][i] + lambda);
   }
-  var betaHat = numeric.dot(
-    s.V,
-    numeric.dot(
-      sigmaInv, numeric.dot(
-        numeric.transpose(s.U), data.ys)));
+
+  s.u.forEach((rowVec, i) => cscheid.blas.scal(s.q[i], rowVec));
+  let betaHat = cscheid.linalg.matVecMul(
+    s.v,
+    cscheid.linalg.matVecMul(s.u, data.ys, true));
   
   var fit = {
     beta: betaHat,
