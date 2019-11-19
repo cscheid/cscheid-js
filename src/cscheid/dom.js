@@ -56,7 +56,11 @@ export function setupCanvas(canvas) {
 // this is slow!
 /**
  * Converts position from any CSS units to pixel units. This is useful, for
+<<<<<<< Updated upstream
  * example, to determine the vertical center of a window by calling it with '0.5vh',
+=======
+ * example, to determine the vertical center of a window by calling it with '50vh',
+>>>>>>> Stashed changes
  * and so on.
  *
  * @param {size} input size description, as a string
@@ -90,4 +94,20 @@ export function animate(fun) {
   }
   window.requestAnimationFrame(tick);
   return stopAnimation;
+}
+
+/**
+ * Loads a Javascript file from a given URL, returns a promise
+ * 
+ * @param {url} input The URL from which to load the script
+ * @returns {Promise} A promise that will resolve when the file loads
+ */
+export function loadScript(url) {
+  return new Promise(function(resolve, reject) {
+    var el = document.createElement("script");
+    el.onload = resolve;
+    el.onerror = reject;
+    el.src = url;
+    document.body.appendChild(el);
+  });
 }
