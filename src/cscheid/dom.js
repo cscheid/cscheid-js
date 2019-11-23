@@ -56,11 +56,7 @@ export function setupCanvas(canvas) {
 // this is slow!
 /**
  * Converts position from any CSS units to pixel units. This is useful, for
-<<<<<<< Updated upstream
- * example, to determine the vertical center of a window by calling it with '0.5vh',
-=======
  * example, to determine the vertical center of a window by calling it with '50vh',
->>>>>>> Stashed changes
  * and so on.
  *
  * @param {size} input size description, as a string
