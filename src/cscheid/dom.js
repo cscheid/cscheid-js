@@ -53,11 +53,14 @@ export function setupCanvas(canvas) {
   return ctx;
 };
 
-// this is slow!
 /**
- * Converts position from any CSS units to pixel units. This is useful, for
- * example, to determine the vertical center of a window by calling it with '50vh',
- * and so on.
+ * Converts position from any CSS units to pixel units. This is
+ * useful, for example, to determine the vertical center of a window
+ * by calling it with '50vh', and so on.
+ *
+ * The code works by appending an actual element to the DOM and
+ * inspecting its position; this means it's quite slow, so
+ * make sure to use it sparingly.
  *
  * @param {size} input size description, as a string
  * @returns {Number} size in CSS pixels
