@@ -2,6 +2,7 @@
 
 import * as cscheid from "../cscheid.js";
 
+export let __name__ = "approximation";
 export function runTests()
 {
   testLeastSquaresLFS();

@@ -1,4 +1,7 @@
 import * as cscheid from "../cscheid.js";
+import * as sh from "./geometry/sinkhorn.js";
+
+export let sinkhorn = sh;
 
 var math = cscheid.math;
 
@@ -388,3 +391,33 @@ Ellipse.prototype.closestPoint = function(p) {
   return this.closestIntersection(p, pointOnAxis);
 };
 
+//////////////////////////////////////////////////////////////////////////
+
+/**
+ * Creates a 2D matrix that represents a discrete metric space
+ * between points in a 2D grid. Each point (i,j) in the 2D grid
+ * is given index i * cols + j (that is, the matrix indexes the
+ * grid in a row-major way)
+ *
+ * @param {rows} input number of rows in the 2D grid
+ * @param {cols} input number of cols in the 2D grid
+ * @returns {Array[Float64Array]} output matrix
+ */
+
+export function gridDistance(rows, cols)
+{
+  let result = cscheid.linalg.zeros(rows * cols, rows * cols);
+  for (let r1 = 0; r1 < rows; ++r1) {
+    for (let c1 = 0; c1 < cols; ++c1) {
+      let i = r1 * cols + c1;
+      for (let r2 = 0; r2 < rows; ++r2) {
+        for (let c2 = 0; c2 < cols; ++c2) {
+          let j = r2 * cols + c2;
+          result[i][j] = Math.sqrt((r1 - r2) * (r1 - r2) +
+                                   (c1 - c2) * (c1 - c2));
+        }
+      }
+    }
+  }
+  return result;
+}

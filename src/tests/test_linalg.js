@@ -1,5 +1,6 @@
 import * as cscheid from "../cscheid.js";
 
+export let __name__ = "linalg";
 export function runTests()
 {
   testMuls();

@@ -282,6 +282,17 @@ export function elementMul(v1, v2) {
   return result;
 }
 
+/** 
+ * returns the Schur (elementwise) product of two matrices
+ *
+ * @param {v1} input m1
+ * @param {v2} input m2
+ * @returns {Array[Float64Array]} v_ij = ( v1_ij * v2_ij )
+ */
+export function schurProduct(m1, m2) {
+  return m1.map((row, i) => elementMul(row, m2[i]));
+}
+
 /**
  * subtracts the row-wise average from every row. in other words, this
  * centers each column in the matrix
@@ -619,4 +630,60 @@ export function svd(a, withu, withv, eps, tol) {
   }
 
   return { u, q, v };
+}
+
+/**
+ * Returns a r x c zero matrix 
+ *
+ * @param {rows} input number of rows in the matrix
+ * @param {cols} input number of columns in the matrix
+ * @returns {Array[Float64Array]} result
+ */
+export function zeros(rows, cols)
+{
+  let result = [];
+  for (let i = 0; i < rows; ++i) {
+    result.push(new Float64Array(cols));
+  }
+  return result;
+}
+
+/**
+ * map each element of a matrix through a function, returns
+ * new matrix
+ *
+ * @param {m} input the matrix
+ * @param {f} input the function
+ * @returns {Array[Float64Array]} the new matrix
+ */
+export function matMap(m, f)
+{
+  return m.map(r => r.map(f));
+}
+
+/**
+ * scale each row of matrix by entries of vector v.
+ * 
+ * @param {m} input the matrix with dimensions r x c
+ * @param {v} input the vector with dimension r
+ * @returns {Array[Float64Array]} the new matrix with dimensions r x c
+ */
+export function scaleRows(m, v)
+{
+  return m.map((row, r) => scale(row, v[r]));
+}
+
+/**
+ * scale each column of matrix by entries of vector v.
+ *
+ * equivalently, replaces each row by element-wise vector
+ * multiplication by v.
+ *
+ * @param {m} input the matrix with dimensions r x c
+ * @param {v} input the vector with dimensions c
+ * @returns {Array[Float64Array]} the new matrix with dimensions r x c
+ */
+export function scaleCols(m, v)
+{
+  return m.map(row => elementMul(row, v));
 }
