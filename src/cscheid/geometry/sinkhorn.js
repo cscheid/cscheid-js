@@ -7,6 +7,10 @@ import * as cscheid from "../../cscheid.js";
  * This is described in page 5 of 
  * https://papers.nips.cc/paper/4927-sinkhorn-distances-lightspeed-computation-of-optimal-transport.pdf
  *
+ * Notice that the notation of the paper is a little strange in that
+ * the transport matrix needs to be multiplied on the *left* by the
+ * source distribution to produce the target distribution.
+ *
  * @param {source} input |m| array describing source distribution
  * @param {target} input |n| array describing target distribution
  * @param {metric} input m x n matrix describing metric space
@@ -62,4 +66,70 @@ export function dualSinkhornDivergence(
     d: d,
     p: pLambda
   };
+}
+
+/**
+ * renders the distribution corresponding to partially moving to
+ * transport. Suresh tells me that he knows of no obvious algorithms
+ * to compute Frechet means under the Wasserstein metric, so we hack
+ * it.
+ * 
+ * @param {transport} input a 2D matrix of dimensions (rows * cols) by
+ * (rows * cols) representing the transportation solution
+ * @param {source} input a vector of dimensions (rows * cols) in
+ * row-major order, representing the input distribution
+ * @param {rows} input the number of rows
+ * @param {cols} input the number of columns
+ * @param {t} input the parameter for producing the partial transport. if t = 0,
+ * produces the original source; if t = 1, produces the final transport
+ * @returns {Float64Array} a vector of dimensions (rows * cols)
+ */
+export function renderPartialImageTransport(transport, source, rows, cols, t)
+{
+  // here's our hack: the nonzero entries in the transport matrix
+  // decompose the source distribution into "packets" that are
+  // eventually transported to specific positions in the solution.
+
+  // for each of these "packets", we write a linear equation of motion
+  // pos(0) = source, pos(1) = destination.
+
+  // we assume the packets are uniformly distributed over the square
+  // cells at the source, and we splat the square cells on the
+  // destination image at the appropriate locations using bilinear
+  // interpolation.
+
+  var result = new Float64Array(rows * cols);
+
+  transport.forEach((row, transportRowIndex) => {
+    // source address
+    let sImageRow = ~~(transportRowIndex / cols);
+    let sImageCol = transportRowIndex - sImageRow * cols;
+    row.forEach((value, transportColIndex) => {
+      if (value === 0)
+        return;
+      // target address
+      let tImageRow = ~~(transportColIndex / cols);
+      let tImageCol = transportColIndex - sImageRow * cols;
+      let lerpRow = t * tImageRow + (1 - t) * sImageRow;
+      let lerpCol = t * tImageCol + (1 - t) * sImageCol;
+      let lerpRowLeft = ~~lerpRow,   lerpColLeft = ~~lerpCol;
+      let u = lerpRow - lerpRowLeft, v = lerpCol - lerpColLeft;
+      let baseAddr = lerpRowLeft * cols + lerpColLeft;
+      let onRowInterior = lerpRowLeft < (rows - 1);
+      let onColInterior = lerpColLeft < (cols - 1);
+      
+      result[baseAddr] += value * (1 - u) * (1 - v);
+      if (onRowInterior) {
+        result[baseAddr + cols] += value * u * (1 - v);
+      }
+      if (onColInterior) {
+        result[baseAddr + 1] += value * (1 - u) * v;
+      }
+      if (onRowInterior && onColInterior) {
+        result[baseAddr + cols + 1] += value * u * v;
+      }
+    });
+  });
+  
+  return result;
 }

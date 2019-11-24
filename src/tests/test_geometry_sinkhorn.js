@@ -13,11 +13,20 @@ export function runTests()
 
 function testGeometrySinkhorn()
 {
+  let s1 = [1,0,0,0,0,0,0,0];
+  let t1 = cscheid.geometry.sinkhorn.dualSinkhornDivergence(
+    s1,
+    [0,0,1,0,0,0,0,0],
+    cscheid.geometry.gridDistance(1, 8),
+    5);
   cscheid.debug.assert(
     cscheid.math.withinEpsRel(
-      cscheid.geometry.sinkhorn.dualSinkhornDivergence(
-        [1,0,0,0,0,0,0,0],
-        [0,0,1,0,0,0,0,0],
-        cscheid.geometry.gridDistance(1, 8),
-        5).d, 2));
+      t1.d, 2));
+
+  // just run this for now, eventually I want to check
+  // the results
+  for (var i=0; i<=16; ++i) {
+    cscheid.geometry.sinkhorn.renderPartialImageTransport(
+      t1.p, s1, 1, 8, i / 16);
+  }
 }
