@@ -1,10 +1,11 @@
 import * as cscheid from "../../cscheid.js";
 
 export function load(urlPath) {
-  urlPath = urlPath || "/datasets/mnist/";
+  urlPath = urlPath || "/datasets/mnist";
 
   // http://yann.lecun.com/exdb/mnist/
-  // we fetch everything at once :shrug:
+  // we fetch everything at once, and assume that sources
+  // are available uncompressed 🤷
   let trainImages = d3.buffer(urlPath + "/train-images-idx3-ubyte");
   let trainLabels = d3.buffer(urlPath + "/train-labels-idx1-ubyte");
   let testImages = d3.buffer(urlPath + "/t10k-images-idx3-ubyte");
