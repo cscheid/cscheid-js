@@ -1,7 +1,8 @@
 import * as cscheid from "../cscheid.js";
 
 /*
- * dom.js: interact with the Document Object Model (and some web browser stuff)
+ * dom.js: interact with the Document Object Model, and more generally
+ * with the operating system inside the browser
  */
 
 /** 
