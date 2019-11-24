@@ -87,3 +87,47 @@ export function histogram(lst, funP)
   });
   return result;
 }
+
+/**
+ * Returns the sum of the values in the array
+ *
+ * Assumes values are numeric
+ *
+ * @param {a} input the array
+ * @returns {Number} the sum of the values
+ */
+export function sum(a)
+{
+  let n = a.length;
+  let result = 0;
+  for (let i = 0; i < n; ++i) {
+    result += a[i];
+  }
+  return result;
+}
+
+/**
+ * Returns the max of the values in the array
+ *
+ * Assumes values are numeric
+ *
+ * @param {a} input the array
+ * @returns {Number} the max of the values
+ */
+export function max(a)
+{
+  return Math.max.apply(null, a);
+}
+
+/**
+ * Returns the min of the values in the array
+ *
+ * Assumes values are numeric
+ *
+ * @param {a} input the array
+ * @returns {Number} the min of the values
+ */
+export function min(a)
+{
+  return Math.min.apply(null, a);
+}
