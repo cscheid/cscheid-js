@@ -39,11 +39,11 @@ export function dualSinkhornDivergence(
   let k = cscheid.linalg.matMap(m, v => Math.exp(-l * v));
   let kTilde = cscheid.linalg.scaleRows(k, r.map(v => 1 / v));
   let oldU = new Float64Array(r.length);
-  let u = (new Float64Array(r.length)).fill(1 / r);
+  let u = (new Float64Array(r.length)).fill(1 / r.length);
 
   let eM = cscheid.linalg.elementMul, mM = cscheid.linalg.matVecMul;
   let inv = vec => vec.map(v => 1/v);
-  while (cscheid.linalg.vecWithinEpsRel(oldU, u)) {
+  while (!cscheid.linalg.vecWithinEpsRel(oldU, u)) {
     oldU = u;
     // u = 1 / (k_tilde.dot(c / u.dot(k)))
     u = inv(mM(kTilde, eM(c, inv(mM(k, u, true, false)))));
@@ -101,15 +101,16 @@ export function renderPartialImageTransport(transport, source, rows, cols, t)
   var result = new Float64Array(rows * cols);
 
   transport.forEach((row, transportRowIndex) => {
-    // source address
-    let sImageRow = ~~(transportRowIndex / cols);
-    let sImageCol = transportRowIndex - sImageRow * cols;
     row.forEach((value, transportColIndex) => {
       if (value === 0)
         return;
+      // source address
+      let sImageRow = ~~(transportRowIndex / cols);
+      let sImageCol = transportRowIndex - sImageRow * cols;
+      
       // target address
       let tImageRow = ~~(transportColIndex / cols);
-      let tImageCol = transportColIndex - sImageRow * cols;
+      let tImageCol = transportColIndex - tImageRow * cols;
       let lerpRow = t * tImageRow + (1 - t) * sImageRow;
       let lerpCol = t * tImageCol + (1 - t) * sImageCol;
       let lerpRowLeft = ~~lerpRow,   lerpColLeft = ~~lerpCol;
