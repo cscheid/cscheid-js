@@ -180,7 +180,7 @@ export function vecWithinEpsRel(v1, v2) {
   let n1 = norm2(v1),
       n2 = norm2(v2),
       d = distance2(v1, v2);
-  let diameter = cscheid.math.eps * (n1 + n2);
+  let diameter = (cscheid.math.eps/2) * (n1 + n2);
   return d < diameter;
 }
 
@@ -686,4 +686,17 @@ export function scaleRows(m, v)
 export function scaleCols(m, v)
 {
   return m.map(row => elementMul(row, v));
+}
+
+/**
+ * lerps from v1 to v2 as t goes from 0 to 1
+ * 
+ * @param {v1} input v1
+ * @param {v2} input v2
+ * @param {t} input t
+ * @returns {Float64Array} (1-t) v1 + t v2
+ */
+export function lerp(v1, v2, t)
+{
+  return v1.map((v, i) => (1-t) * v + t * v2[i]);
 }

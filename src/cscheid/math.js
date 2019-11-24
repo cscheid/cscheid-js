@@ -39,7 +39,7 @@ export function withinEps(v) {
  */
 export function withinEpsRel(v1, v2) {
   let dv = Math.abs(v1 - v2);
-  let diameter = eps * (Math.abs(v1) + Math.abs(v2));
+  let diameter = (eps/2) * (Math.abs(v1) + Math.abs(v2));
   return dv < diameter;
 }
 
