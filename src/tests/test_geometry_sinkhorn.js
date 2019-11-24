@@ -13,12 +13,12 @@ export function runTests()
 
 function testGeometrySinkhorn()
 {
-  let s1 = [1,0,0,0,0,0,0,0];
+  let s1 = [0,1,0,1,0,0,0,0];
   let t1 = cscheid.geometry.sinkhorn.dualSinkhornDivergence(
     s1,
-    [0,0,1,0,0,0,0,0],
+    [1,0,0,0,1,0,0,0],
     cscheid.geometry.gridDistance(1, 8),
-    5);
+    8);
   cscheid.debug.assert(
     cscheid.math.withinEpsRel(
       t1.d, 2));
