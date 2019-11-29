@@ -14,6 +14,7 @@ import * as legend         from "./cscheid/legend.js";
 import * as krylov         from "./cscheid/krylov.js";
 import * as linalg         from "./cscheid/linalg.js";
 import * as math           from "./cscheid/math.js";
+import * as object         from "./cscheid/object.js";
 import * as plot           from "./cscheid/plot.js";
 import * as random         from "./cscheid/random.js";
 import * as reveal         from "./cscheid/reveal.js";
