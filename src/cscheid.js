@@ -47,6 +47,7 @@ export { approximation,
          reveal,
          sparse,
          svg,
-         time };
+         time,
+         vis };
 
 
