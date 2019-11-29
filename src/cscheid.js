@@ -4,6 +4,7 @@ import * as basis          from "./cscheid/basis.js";
 import * as blas           from "./cscheid/blas.js";
 import * as caliper        from "./cscheid/caliper.js";
 import * as classify       from "./cscheid/classify.js";
+import * as css            from "./cscheid/css.js";
 import * as data           from "./cscheid/data.js";
 import * as datasets       from "./cscheid/datasets.js";
 import * as dataStructures from "./cscheid/dataStructures.js";
@@ -28,6 +29,7 @@ export { approximation,
          blas,
          caliper,
          classify,
+         css,
          data,
          datasets,
          dataStructures,
