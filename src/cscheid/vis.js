@@ -47,7 +47,7 @@ export function grandTour(d)
 export function CMDS(m)
 {
   let SVD = cscheid.linalg.svd;
-  let t = cscheid.linalg.matTranspose;
+  let t = cscheid.linalg.transpose;
   let sz = m.length;
   let subtractRowAvg = cscheid.linalg.centerColumns;
   // function subtractRowAvg(m) {
