@@ -22,6 +22,7 @@ import * as reveal         from "./cscheid/reveal.js";
 import * as sparse         from "./cscheid/sparse.js";
 import * as svg            from "./cscheid/svg.js";
 import * as time           from "./cscheid/time.js";
+import * as vis            from "./cscheid/vis.js";
 
 export { approximation,
          array,
