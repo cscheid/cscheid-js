@@ -21,6 +21,7 @@ import * as random         from "./cscheid/random.js";
 import * as reveal         from "./cscheid/reveal.js";
 import * as sparse         from "./cscheid/sparse.js";
 import * as svg            from "./cscheid/svg.js";
+import * as test           from "./cscheid/test.js";
 import * as time           from "./cscheid/time.js";
 import * as vis            from "./cscheid/vis.js";
 
@@ -47,6 +48,7 @@ export { approximation,
          reveal,
          sparse,
          svg,
+         test,
          time,
          vis };
 
