@@ -114,11 +114,11 @@ export function values(obj) {
 
 export function map(obj, iteratee, context) {
   iteratee = cb(iteratee, context);
-  var keys = !isArrayLike(obj) && keys(obj),
-      length = (keys || obj).length,
+  var ks = !isArrayLike(obj) && keys(obj),
+      length = (ks || obj).length,
       results = Array(length);
   for (var index = 0; index < length; index++) {
-    var currentKey = keys ? keys[index] : index;
+    var currentKey = ks ? ks[index] : index;
     results[index] = iteratee(obj[currentKey], currentKey, obj);
   }
   return results;
@@ -166,3 +166,50 @@ export function toArray(obj)
   }
   return values(obj);
 }
+
+/**
+ * Returns true if all elements in obj pass the predicate
+ *
+ * @param {obj} input the object
+ * @param {predicate} input the predicate, or identity
+ * @param {context} input the context to be passed to the predicate,
+ *   or nothing
+ * @returns {boolean} false if any of the elements in obj fail the
+ *   predicate, true otherwise
+ */
+export function all(obj, predicate, context)
+{
+  predicate = cb(predicate, context);
+  var ks = !isArrayLike(obj) && keys(obj),
+      length = (ks || obj).length;
+  for (var index = 0; index < length; index++) {
+    var currentKey = ks ? ks[index] : index;
+    if (!predicate(obj[currentKey], currentKey, obj)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * Returns true if any element in obj passes the predicate
+ *
+ * @param {obj} input the object
+ * @param {predicate} input the predicate, or identity
+ * @param {context} input the context to be passed to the predicate,
+ *   or nothing
+ * @returns {boolean} false if none of the elements in obj pass the
+ *   predicate, true otherwise
+ */
+export function any(obj, predicate, context) {
+  predicate = cb(predicate, context);
+  var ks = !isArrayLike(obj) && keys(obj),
+      length = (ks || obj).length;
+  for (var index = 0; index < length; index++) {
+    var currentKey = ks ? ks[index] : index;
+    if (predicate(obj[currentKey], currentKey, obj)) {
+      return true;
+    }
+  }
+  return false;
+};
