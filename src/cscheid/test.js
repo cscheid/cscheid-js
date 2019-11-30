@@ -7,6 +7,14 @@ import * as cscheid from "../cscheid.js";
 // powerful
 //
 
-function withGenerators(f) {
-  let 
+export function withGenerators(f, ...generators) {
+  return function() {
+    return f(...generators.map(fn => fn()));
+  };
+}
+
+export function repeat(n, f) {
+  for (let i = 0; i < n; ++i) {
+    f();
+  }
 }
