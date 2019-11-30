@@ -3,28 +3,57 @@
  * This is _not_ "flatten": it won't work on nested structures.
  *
  * @param {lst} input the array of arrays
- * @returns {Array} the concatenated
+ * @returns {Array} the concatenated array
  **/
 export function concat(lst)
 {
   return [].concat.apply([], lst);
 }
 
-// This assumes lst is numeric.
+/**
+ * returns the prefix sum of the array (or the "discrete definite
+ * integral to to i")
+ *
+ * @param {lst} input array of numbers
+ * @returns {Float64Array} the resulting prefix sum
+*/
 export function prefixSum(lst)
 {
   var result = new Float64Array(lst.length + 1);
-  for (var i=1; i<=lst.length; ++i)
+  for (var i = 1; i <= lst.length; ++i)
     result[i] = result[i-1] + lst[i-1];
   return result;
 }
 
-// This assumes lst is sorted and numeric.
-// returns the least index such that lst[index] > target
-// this returns an invalid index if max(lst) <= target or min(lst) > target
+/**
+ * returns the array of discrete differences
+ *
+ * @param {lst} input array of numbers
+ * @returns {Float64Array} result[i] = lst[i+1] - lst[i], with length
+ *   being one less than that of lst
+ */
+export function discreteDifferences(lst)
+{
+  var result = new Float64Array(lst.length - 1);
+  for (var i = 0; i < lst.length - 1; ++i) {
+    result[i] = lst[i+1] - lst[i];
+  }
+  return result;
+}
+
+/**
+ * returns the least index such that lst[index] > target
+ * 
+ * This assumes lst is sorted and numeric.
+ * this returns an invalid index if max(lst) <= target or min(lst) > target
+ *
+ * @param {lst} input array
+ * @param {target} input target
+ * @returns {boolean} the least index such that lst[index] > target
+ */
 export function lowerBound(lst, target)
 {
-  var lo = 0, hi = lst.length-1;
+  var lo = 0, hi = lst.length - 1;
   var vLo = lst[lo], vHi = lst[hi];
   while (hi - lo > 1) {
     var mid = ~~((lo + hi) / 2);
@@ -48,12 +77,19 @@ export function lowerBound(lst, target)
   return hi;
 }
 
-// This assumes lst is sorted and numeric.
-// returns the greatest index such that lst[index] < target
-// this returns an invalid index if max(lst) < target or min(lst) >= target
+/**
+ * returns the greatest index such that lst[index] < target
+ * 
+ * This assumes lst is sorted and numeric.
+ * this returns an invalid index if max(lst) < target or min(lst) >= target
+ *
+ * @param {lst} input array
+ * @param {target} input target
+ * @returns {boolean} the greatest index such that lst[index] < target
+ */
 export function upperBound(lst, target)
 {
-  var lo = 0, hi = lst.length-1;
+  var lo = 0, hi = lst.length - 1;
   var vLo = lst[lo], vHi = lst[hi];
   while (hi - lo > 1) {
     var mid = ~~((lo + hi) / 2);
@@ -77,6 +113,13 @@ export function upperBound(lst, target)
   return lo;
 }
 
+/**
+ * Returns the discrete histogram of the array
+ *
+ * @param {lst} input the array to be processed
+ * @param {funP} input the function that sends array values to histogram bins
+ * @returns {Map} the histogram, represented as a map of bin keys to counts
+ */
 export function histogram(lst, funP)
 {
   let fun = funP ? funP : (d => d);
