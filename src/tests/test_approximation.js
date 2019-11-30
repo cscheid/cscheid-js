@@ -45,4 +45,12 @@ function testLeastSquaresLFS()
     sample(-1, 1, runge, 8),  uniformLFS(-8/7, 8/7, 8));
   var sq11runge = cscheid.approximation.leastSquaresLFS(
     sample(-1, 1, runge, 12), uniformLFS(-12/11, 12/11, 12));
+
+
+  var linearFitGoodEnough = cscheid.approximation.polynomial(
+    sample(-1, 1, d => d, 20), 2
+  );
+  
+  cscheid.debug.assert(
+    cscheid.math.withinEps(linearFitGoodEnough.beta[2], 0));
 }
