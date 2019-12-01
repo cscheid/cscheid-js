@@ -1,3 +1,5 @@
+/** @module cscheid/figure */
+
 import * as cscheid from "../cscheid.js";
 
 // Utilities to help with figures: captions, refs, etc

@@ -1,3 +1,5 @@
+/** @module cscheid/geometry/sinkhorn */
+
 import * as cscheid from "../../cscheid.js";
 
 /**
@@ -11,13 +13,12 @@ import * as cscheid from "../../cscheid.js";
  * the transport matrix needs to be multiplied on the *left* by the
  * source distribution to produce the target distribution.
  *
- * @param {source} input |m| array describing source distribution
- * @param {target} input |n| array describing target distribution
- * @param {metric} input m x n matrix describing metric space
- * @param {lambda} input regularization
+ * @param {Array} source - |m| array describing source distribution
+ * @param {Array} target - |n| array describing target distribution
+ * @param {Array} metric - m x n matrix describing metric space
+ * @param {number} lambda - regularization
  * @returns {Object} result.d: distance; result.p: transport matrix
  */
-
 export function dualSinkhornDivergence(
   source, target, metric, lambda) {
   let c = target;
@@ -53,7 +54,7 @@ export function dualSinkhornDivergence(
   let pLambdaTrunc = cscheid.linalg.scaleRows(cscheid.linalg.scaleCols(k, v), u);
   let pLambda = [];
   let nZI = 0;
-  i.forEach((v, ix) => {
+  i.forEach(v => {
     if (v) {
       // we can actually just refer to these instead of copying since
       // they'll never be used by anyone else
@@ -74,14 +75,16 @@ export function dualSinkhornDivergence(
  * to compute Frechet means under the Wasserstein metric, so we hack
  * it.
  * 
- * @param {transport} input a 2D matrix of dimensions (rows * cols) by
+ * @param {Array} transport - a 2D matrix of dimensions (rows * cols) by
  * (rows * cols) representing the transportation solution
- * @param {source} input a vector of dimensions (rows * cols) in
+ * @param {Array} source - a vector of dimensions (rows * cols) in
  * row-major order, representing the input distribution
- * @param {rows} input the number of rows
- * @param {cols} input the number of columns
- * @param {t} input the parameter for producing the partial transport. if t = 0,
- * produces the original source; if t = 1, produces the final transport
+ * @param {number} rows - the number of rows
+ * @param {number} cols - the number of columns
+ * @param {number} t - the parameter for producing the partial
+ * transport. if t = 0, produces the original source; if t = 1,
+ * produces the final transport; if 0<t<1, attempts to reconstruct a
+ * continuous function on the Wasserstein metric
  * @returns {Float64Array} a vector of dimensions (rows * cols)
  */
 export function renderPartialImageTransport(transport, source, rows, cols, t)

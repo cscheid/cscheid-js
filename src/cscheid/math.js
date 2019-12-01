@@ -1,12 +1,12 @@
-import * as cscheid from "../cscheid.js";
-
+/** @module cscheid/math
+ */
 export var eps = 1e-6;
 
 /**
  * executes function with a different epsilon value
  *
- * @param {thisEps} input epsilon value with which to run function
- * @param {f} input function to run
+ * @param {number} thisEps - epsilon value with which to run function
+ * @param {function} f - function to run
  */
 export function withEps(thisEps, f) {
   var oldEps = eps;
@@ -22,8 +22,8 @@ export function withEps(thisEps, f) {
  * returns true if v is inside an eps-ball around zero
  * (if absolute "error" is below eps)
  *
- * @param {v} input value to check
- * @returns {bool} whether or not value is inside eps-ball
+ * @param {number} v - value to check
+ * @returns {boolean} whether or not value is inside eps-ball
  */
 export function withinEps(v) {
   return Math.abs(v) < eps;
@@ -33,9 +33,9 @@ export function withinEps(v) {
  * returns true if v1 and v2 fit inside an (eps/2 * (|v1| + |v2|))-ball
  * of one another.
  *
- * @param {v1} input v1
- * @param {v2} input v2
- * @returns {bool} whether v1 and v2 are "relative-within" eps of one another
+ * @param {number} v1 - v1
+ * @param {number} v2 - v2
+ * @returns {boolean} whether v1 and v2 are "relative-within" eps of one another
  */
 export function withinEpsRel(v1, v2) {
   let dv = Math.abs(v1 - v2);
@@ -53,9 +53,9 @@ export function withinEpsRel(v1, v2) {
  *
  * In other words, expect instability if discriminant is near 0.
  *
- * @param {a} input a
- * @param {b} input b
- * @param {c} input c
+ * @param {number} a - a
+ * @param {number} b - b
+ * @param {number} c - c
  * @return {Object} object o such that o.root1 and o.root2 are both roots of quadratic
  */
 export function quadratic(a, b, c) {
@@ -85,9 +85,9 @@ export function quadratic(a, b, c) {
  * finds one root of f, given a bracket in [lo, up]: 
  *   either f(lo) < 0 and f(hi) > 0 or f(lo) > 0 and f(hi) < 0
  *
- * @param {f} input function to evaluate, Number -> Number
- * @param {lo} input lower bound of bracket
- * @param {up} input upper bound of bracket
+ * @param {function} f - function to evaluate, Number -> Number
+ * @param {number} lo - lower bound of bracket
+ * @param {number} up - upper bound of bracket
  * @returns {Object} returns midpoint of bracketing interval with
  * length < eps (o.v) and the value of the function evaluated there
  * (o.fV)
@@ -120,10 +120,10 @@ export function findRoot(f, lo, up) {
 /**
  * finds extremum of function using golden section search.
  *
- * @param {f} input function to evaluate, Number -> Number
- * @param {lo} input lower bound of bracket
- * @param {mid} input some point inside the bracket
- * @param {up} input upper bound of bracket
+ * @param {function} f - function to evaluate, Number -> Number
+ * @param {number} lo -lower bound of bracket
+ * @param {number} mid - some point inside the bracket
+ * @param {number} up - upper bound of bracket
  * @returns {Object} 
  *   - o.v: midpoint of extremum bracket with width < eps; 
  *   - o.fV: function value at extremum; 
@@ -199,8 +199,8 @@ export function findExtremum(f, lo, mid, up) {
 /**
  * convert degrees to radians
  *
- * @param {d} input value in degrees
- * @returns {Number} value in radians
+ * @param {number} d - value in degrees
+ * @returns {number} value in radians
  */
 export function radians(d) {
   return d * (Math.PI/180);
@@ -209,8 +209,8 @@ export function radians(d) {
 /**
  * convert radians to degrees
  *
- * @param {r} input value in radians
- * @returns {Number} value in degrees
+ * @param {number} r - value in radians
+ * @returns {number} value in degrees
  */
 export function degrees(r) {
   return r / (Math.PI/180);
@@ -220,9 +220,9 @@ export function degrees(r) {
  * returns (n choose k), the binomial coefficients with indices n and k
  *   n!/(k! (n - k)!)
  *
- * @param {n} input n
- * @param {k} input k
- * @returns {Number} n!/(k! (n - k)!)
+ * @param {number} n - n
+ * @param {number} k - k
+ * @returns {number} n!/(k! (n - k)!)
  */
 export function choose(n, k) {
   k = Math.min(k, n-k);
@@ -238,8 +238,8 @@ export function choose(n, k) {
 /**
  * returns n! = 1 * 2 * ... * n
  *
- * @param {n} input n
- * @returns {Number} n!
+ * @param {number} n - n
+ * @returns {number} n!
  */
 export function fact(n) {
   var result = 1;

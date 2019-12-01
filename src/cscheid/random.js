@@ -1,3 +1,5 @@
+/** @module cscheid/random */
+
 import * as cscheid from "../cscheid.js";
 
 // plain box-muller
@@ -97,5 +99,5 @@ distributions.mixture = function(ds, ws) {
       var i = cscheid.array.upperBound(sumWeights, u);
       return ds[i]();
     };
-  };
+  }
 };

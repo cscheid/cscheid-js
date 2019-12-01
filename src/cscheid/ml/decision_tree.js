@@ -1,10 +1,12 @@
+/** @module cscheid/ml/decision_tree */
+
 import * as cscheid from "../../cscheid.js";
 
 function leafNode(label)
 {
   return {
     label: label,
-    classify: function(instance) {
+    classify: function() {
       return this.label;
     }
   };
@@ -28,11 +30,11 @@ function internalNode(featureName, featureValue, treeIfFalse, treeIfTrue)
   };
 }
 
-function majorityVote(samples)
-{
-  let h = cscheid.array.histogram(samples, (sample) => sample.label);
-  return cscheid.map.argmax(h);
-}
+// function majorityVote(samples)
+// {
+//   let h = cscheid.array.histogram(samples, (sample) => sample.label);
+//   return cscheid.map.argmax(h);
+// }
 
 function majorityVoteCount(samples)
 {
@@ -41,7 +43,7 @@ function majorityVoteCount(samples)
 }
 
 // decision tree training for datasets with purely categorical features.
-function simpleDecisionTree()
+export function simpleDecisionTree()
 {
   function internalTrain(labeledSamples, remainingFeatureValuePairs, remainingDepth) {
     let h = cscheid.array.histogram(labeledSamples, (sample) => sample.label);

@@ -1,5 +1,5 @@
 // tests for cscheid/approximation.js
-
+/*global d3*/
 import * as cscheid from "../cscheid.js";
 
 export let __name__ = "approximation";
@@ -39,11 +39,14 @@ function sample(min, max, f, count) {
 
 function testLeastSquaresLFS()
 {
-  var sq3runge  = cscheid.approximation.leastSquaresLFS(
+  // var sq3runge  = 
+  cscheid.approximation.leastSquaresLFS(
     sample(-1, 1, runge, 4),  uniformLFS(-4/3, 4/3, 4));
-  var sq7runge  = cscheid.approximation.leastSquaresLFS(
+  // var sq7runge  = 
+  cscheid.approximation.leastSquaresLFS(
     sample(-1, 1, runge, 8),  uniformLFS(-8/7, 8/7, 8));
-  var sq11runge = cscheid.approximation.leastSquaresLFS(
+  // var sq11runge = 
+  cscheid.approximation.leastSquaresLFS(
     sample(-1, 1, runge, 12), uniformLFS(-12/11, 12/11, 12));
 
 

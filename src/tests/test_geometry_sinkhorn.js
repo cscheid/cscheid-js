@@ -1,7 +1,5 @@
 // tests for cscheid/geometry/sinkhorn.js
-
 import * as cscheid from "../cscheid.js";
-import * as utils from "./utils.js";
 
 export let __name__ = "geometry.sinkhorn";
 export function runTests()

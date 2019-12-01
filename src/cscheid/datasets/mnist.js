@@ -1,5 +1,6 @@
-import * as cscheid from "../../cscheid.js";
+/** @module cscheid/datasets/mnist */
 
+/*global d3*/
 export function load(urlPath) {
   urlPath = urlPath || "/datasets/mnist";
 
@@ -29,11 +30,10 @@ export function load(urlPath) {
           getTestPoint: function(ix) {
             return {
               data: new Uint8Array(teIBuf, (ix * 28 * 28) + 16, 28 * 28),
-              label: trainLView.getInt8(ix + 8)
+              label: testLView.getInt8(ix + 8)
             };
           },
         };
-        return values;
       });
   return resultPromise;
 }

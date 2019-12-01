@@ -1,3 +1,6 @@
+/** @module cscheid/vis
+ */ 
+
 import * as cscheid from "../cscheid.js";
 
 //////////////////////////////////////////////////////////////////////////////
@@ -48,16 +51,7 @@ export function CMDS(m)
 {
   let SVD = cscheid.linalg.svd;
   let t = cscheid.linalg.transpose;
-  let sz = m.length;
   let subtractRowAvg = cscheid.linalg.centerColumns;
-  // function subtractRowAvg(m) {
-  //   let avg = new Float64Array(sz);
-  //   m.forEach(function(r) {
-  //     avg = cscheid.linalg.add(avg, r);
-  //   });
-  //   avg = cscheid.linalg.scale(avg, 1/sz);
-  //   return m.map(function(r) { return cscheid.linalg.sub(r, avg); });
-  // }
   m = t(subtractRowAvg(m));
   m = t(subtractRowAvg(m));
   m = m.map(function(r) { return cscheid.linalg.scale(r, -1/2); });

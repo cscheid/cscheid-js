@@ -1,17 +1,14 @@
-import * as cscheid from "../cscheid.js";
+/** @module cscheid/dom */
 
-/*
- * dom.js: interact with the Document Object Model, and more generally
- * with the operating system inside the browser
- */
+/*global d3*/
 
 /** 
  * creates elements (by default divs) that are horizontally centered
  * on the webpage
  *
- * @param {sel} input d3 selection with parents
- * @param {el}  input element name, by default "div"
- * @returns {d3 selection} selection containing created elements
+ * @param {Object} sel - d3 selection with parents
+ * @param {string} el - element name, by default "div"
+ * @returns {Object} d3 selection containing created elements
  */
 export function makeCenteredElement(sel, el) {
   // https://stackoverflow.com/questions/618097/how-do-you-easily-horizontally-center-a-div-using-css
@@ -20,15 +17,15 @@ export function makeCenteredElement(sel, el) {
     .style("text-align", "center")
     .append(el)
     .style("display", "inline-block");
-};
+}
 
 /**
  * Creates canvas drawing context and sets up High-DPI rendering,
  * keeping the rendering coordinate systems consistent with the
  * low-DPI case
  * 
- * @param {canvas} input canvas DOM element
- * @returns {Canvas drawing context} the newly created canvas drawing context
+ * @param {Object} canvas - canvas DOM element
+ * @returns {Object} the newly created canvas drawing context
  */
 // FIXME: should `canvas` be a d3 selection?
 export function setupCanvas(canvas) {
@@ -52,7 +49,7 @@ export function setupCanvas(canvas) {
   // and this is just convenient for downstream calls;
   ctx.dpr = dpr;
   return ctx;
-};
+}
 
 /**
  * Converts position from any CSS units to pixel units. This is
@@ -63,8 +60,8 @@ export function setupCanvas(canvas) {
  * inspecting its position; this means it's quite slow, so
  * make sure to use it sparingly.
  *
- * @param {size} input size description, as a string
- * @returns {Number} size in CSS pixels
+ * @param {string} size - size description, as a string
+ * @returns {number} size in CSS pixels
  */
 export function convertToPixelUnits(size) {
   var d = d3.select("body").append("div").style("position", "absolute").style("left", size);
@@ -78,8 +75,8 @@ export function convertToPixelUnits(size) {
 /** 
  * Sets up an animation callback loop with requestAnimationFrame.
  * 
- * @param {fun} input animation callback to be called at every rendering tick.
- * @returns {stop callback} a callback that will stop the animation.
+ * @param {function} fun - animation callback to be called at every rendering tick.
+ * @returns {function} a callback that, when called, will stop the animation.
  */
 export function animate(fun) {
   let stop = false;
@@ -99,7 +96,7 @@ export function animate(fun) {
 /**
  * Loads a Javascript file from a given URL, returns a promise
  * 
- * @param {url} input The URL from which to load the script
+ * @param {string} url - The URL from which to load the script
  * @returns {Promise} A promise that will resolve when the file loads
  */
 export function loadScript(url) {

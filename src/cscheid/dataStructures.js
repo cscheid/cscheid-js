@@ -1,3 +1,5 @@
+/** @module cscheid/dataStructures */
+
 // maxHeap
 export function binaryHeap(values, priorities)
 {
@@ -8,7 +10,7 @@ export function binaryHeap(values, priorities)
   }
   function right(i) {
     return 2 * i + 2;
-  };
+  }
   function parent(i) {
     return ~~((i - 1) / 2);
   }
@@ -57,9 +59,9 @@ export function binaryHeap(values, priorities)
     }
   }
 
+  /*eslint no-unused-vars: ["error", { "varsIgnorePattern": "checkHealth" }]*/
   function checkHealth() {
     for (var i=0; i<heap.length; ++i) {
-      var pp = priorities[i];
       var ci = [left(i), right(i)];
       ci.forEach(j => {
         if (j < heap.length && priorities[j] > priorities[i])

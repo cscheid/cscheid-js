@@ -1,3 +1,5 @@
+/** @module cscheid/krylov */
+
 import * as blas from "./blas.js";
 import * as linalg from "./linalg.js";
 import * as random from "./random.js";

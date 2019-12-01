@@ -1,4 +1,4 @@
-import * as cscheid from "../cscheid.js";
+/** @module cscheid/debug */
 
 var trace = [];
 export function add(obj, attrs) {

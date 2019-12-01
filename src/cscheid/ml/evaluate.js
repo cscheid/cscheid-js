@@ -1,3 +1,5 @@
+/** @module cscheid/ml/evaluate */
+
 function classifyLabeledSet(model, labeledSamples)
 {
   return labeledSamples.map(sample => {
@@ -13,5 +15,6 @@ export function accuracy(model, labeledSamples) {
       result += 1;
     }
   });
+  return result;
 }
 

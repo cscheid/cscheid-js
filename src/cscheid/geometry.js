@@ -1,3 +1,5 @@
+/** @module cscheid/geometry */
+
 import * as cscheid from "../cscheid.js";
 import * as sh from "./geometry/sinkhorn.js";
 
@@ -15,7 +17,7 @@ export function Vec2(x, y) {
 
 export function vec2(x, y) {
   return new Vec2(x, y);
-};
+}
 
 Vec2.prototype.plus = function(p) {
   return new Vec2(this.x + p.x, this.y + p.y);
@@ -330,7 +332,6 @@ Ellipse.prototype.closestIntersection = function(c, p) {
 Ellipse.prototype.tangentPointWithNormal = function(n) {
   var tangent = vec2(n.y, -n.x);
   var p1 = this.center;
-  var i=0;
   do {
     var p2 = p1.plus(n);
     var closestP = this.closestIntersection(p2, p1);
@@ -340,7 +341,6 @@ Ellipse.prototype.tangentPointWithNormal = function(n) {
     if (line2 === undefined)
       return undefined;
     p1 = line2[1].plus(line2[0]).scale(0.5);
-    ++i;
   } while (p1.distance(closestP) >= 1e-6);
   return p1;
 };
@@ -399,9 +399,9 @@ Ellipse.prototype.closestPoint = function(p) {
  * is given index i * cols + j (that is, the matrix indexes the
  * grid in a row-major way)
  *
- * @param {rows} input number of rows in the 2D grid
- * @param {cols} input number of cols in the 2D grid
- * @returns {Array[Float64Array]} output matrix
+ * @param {number} rows - number of rows in the 2D grid
+ * @param {cols} cols - number of cols in the 2D grid
+ * @returns {Array} output matrix
  */
 
 export function gridDistance(rows, cols)

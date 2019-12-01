@@ -1,4 +1,4 @@
-import * as cscheid from "../cscheid.js";
+/** @module cscheid/object */
 
 //////////////////////////////////////////////////////////////////////////////
 // bits of underscore that are generally useful go here
@@ -31,7 +31,7 @@ export function allKeys(obj) {
   var keys = [];
   for (var key in obj) keys.push(key);
   return keys;
-};
+}
 
 export let extend = createAssigner(allKeys);
 export let defaults = createAssigner(allKeys, true);
@@ -47,34 +47,69 @@ export function clone(obj)
 // it is all so very ugly.
 
 let ObjProto = Object.prototype;
-let ArrayProto = Array.prototype;
+// let ArrayProto = Array.prototype;
 let toString = ObjProto.toString;
-let slice = ArrayProto.slice;
-let push = ArrayProto.push;
-let identity = function(v) { return v; };
+// let slice = ArrayProto.slice;
+// let push = ArrayProto.push;
+function identity(v) { return v; }
 
-let shallowProperty = function(key) {
+function shallowProperty(key) {
   return function(obj) {
     return obj == null ? void 0 : obj[key];
   };
-};
+}
 let MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
 let getLength = shallowProperty('length');
-let isArrayLike = function(collection) {
+
+function isArrayLike(collection) {
   var length = getLength(collection);
   return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
-};
+}
 
-function builtinIteratee(value, context) {
-  return cb(value, context, Infinity);
-};
+function isMatch(object, attrs) {
+  var ks = keys(attrs), length = ks.length;
+  if (object == null) return !length;
+  var obj = Object(object);
+  for (var i = 0; i < length; i++) {
+    var key = ks[i];
+    if (attrs[key] !== obj[key] || !(key in obj)) return false;
+  }
+  return true;
+}
+
+let extendOwn = createAssigner(keys);
+
+function matcher(attrs) {
+  attrs = extendOwn({}, attrs);
+  return function(obj) {
+    return isMatch(obj, attrs);
+  };
+}
+
+function deepGet(obj, path) {
+  var length = path.length;
+  for (var i = 0; i < length; i++) {
+    if (obj == null) return void 0;
+    obj = obj[path[i]];
+  }
+  return length ? obj : void 0;
+}
+
+function property(path) {
+  if (Array.isArray(path)) {
+    return shallowProperty(path);
+  }
+  return function(obj) {
+    return deepGet(obj, path);
+  };
+}
 
 function cb(value, context, argCount) {
   if (value == null) return identity;
   if (isFunction(value)) return optimizeCb(value, context, argCount);
-  if (isObject(value) && !Array.isArray(value)) return _.matcher(value);
-  return _.property(value);
-};
+  if (isObject(value) && !Array.isArray(value)) return matcher(value);
+  return property(value);
+}
 
 var optimizeCb = function(func, context, argCount) {
   if (context === void 0) return func;
@@ -110,7 +145,7 @@ export function values(obj) {
     values[i] = obj[ks[i]];
   }
   return values;
-};
+}
 
 export function map(obj, iteratee, context) {
   iteratee = cb(iteratee, context);
@@ -122,7 +157,7 @@ export function map(obj, iteratee, context) {
     results[index] = iteratee(obj[currentKey], currentKey, obj);
   }
   return results;
-};
+}
 
 export function isArguments(obj) { return toString.call(obj) === '[object Arguments]'; }
 export function isFunction(obj)  { return toString.call(obj) === '[object Function]'; }
@@ -140,7 +175,7 @@ export function isWeakSet(obj)   { return toString.call(obj) === '[object WeakSe
 export function isObject(obj) {
   var type = typeof obj;
   return type === 'function' || type === 'object' && !!obj;
-};
+}
 
 var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
 /**
@@ -212,4 +247,4 @@ export function any(obj, predicate, context) {
     }
   }
   return false;
-};
+}

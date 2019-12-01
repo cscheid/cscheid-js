@@ -1,3 +1,7 @@
+/** @module cscheid/reveal */
+
+/*global Reveal*/
+
 export function setSlideDispatchers(slideDispatchers)
 {
   Reveal.addEventListener('fragmentshown', function(event) {

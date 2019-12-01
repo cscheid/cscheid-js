@@ -1,3 +1,5 @@
+/** @module cscheid/plot */
+
 /*global d3,_ */
 
 import * as cscheid from "../cscheid.js";
@@ -687,7 +689,7 @@ export function create(div, width, height, opts) {
           if (transition) {
             var obj = {};
             d3.select(obj).transition().call(transition)
-              .tween("attr.d", function(d, i) {
+              .tween("attr.d", function() {
                 return function(t) {
                   blas.copy(newScalarField, tweenField);
                   blas.axby(1-t, oldScalarField, t, tweenField);
@@ -702,7 +704,7 @@ export function create(div, width, height, opts) {
                   sel.data(c).attr("d", contourPath);
                 };
               })
-              .on("end", d => {
+              .on("end", () => {
                 // inefficient since it's called many times, whatever.
                 oldScalarField = new Float64Array(newScalarField);
                 oldContourValues = new Float64Array(newContourValues);

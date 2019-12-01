@@ -60,7 +60,7 @@ export function normalizedLeastSquares(X, y, lambda) {
     }
     nX.push(row);
   }
-  var lstSq = leastSquares(nX, y);
+  var lstSq = leastSquares(nX, y, lambda);
   return {
     beta: lstSq.beta,
     effdf: lstSq.effdf,

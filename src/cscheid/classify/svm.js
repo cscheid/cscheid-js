@@ -1,3 +1,5 @@
+/** @module cscheid/classify/svm */
+
 import * as blas from "../blas.js";
 
 // essentially an implementation of

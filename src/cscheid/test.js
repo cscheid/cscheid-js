@@ -1,4 +1,4 @@
-import * as cscheid from "../cscheid.js";
+/** @module cscheid/test */
 
 //////////////////////////////////////////////////////////////////////////////
 // Stuff that's useful to write good tests

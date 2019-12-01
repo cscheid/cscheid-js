@@ -1,10 +1,13 @@
-import * as cscheid from "../cscheid.js";
+/** @module cscheid/svg */
 
+/*global d3*/
 /**
  * Returns a CSS transform string corresponding to the translation by v.x, v.y
  *
- * @param {v} input the vector
- * @returns {String} the CSS transform string
+ * @param {Object} v - the vector
+ * @param {number} v.x - x coordinate
+ * @param {number} v.y - y coordinate
+ * @returns {string} the CSS transform string
  */
 export function translateVec(v) {
   return translate(v.x, v.y);
@@ -14,9 +17,9 @@ export function translateVec(v) {
  * Returns a CSS transform string corresponding to the translation by x and y
  * If given a vector object, returns the string corresponding to v.x, v.y
  *
- * @param {v or x} input either the vector or the x coordinate
- * @param {y} input the x coordinate
- * @returns {String} the CSS transform string
+ * @param {(number|Object)} x - either the vector or the x coordinate
+ * @param {(number|undefined)} y - the y coordinate
+ * @returns {string} the CSS transform string
  */
 export function translate(x, y) {
   if (y === undefined) {
@@ -30,10 +33,10 @@ export function translate(x, y) {
  * Returns a CSS transform string corresponding to the rotation by r degrees
  * If given parameters x and y, the rotation is performed around (x, y)
  *
- * @param {r} input rotation amount
- * @param {x} input if present, rotate around this x coordinate
- * @param {y} input if present, rotate around this y coordinate
- * @returns {String} the CSS transform string
+ * @param {number} r - rotation amount
+ * @param {(number|undefined)} x - if present, rotate around this x coordinate
+ * @param {(number|undefined)} y - if present, rotate around this y coordinate
+ * @returns {string} the CSS transform string
  */
 export function rotate(r, x, y) {
   if (x === undefined) {
@@ -60,8 +63,8 @@ export function useClipPath(clipEl)
 export function centeredTextRotate(r)
 {
   return centeredRotate(
-    function(d) { return this.getAttribute("x") || 0; },
-    function(d) { return this.getAttribute("y") || 0; },
+    function() { return this.getAttribute("x") || 0; },
+    function() { return this.getAttribute("y") || 0; },
     r);
 }
 

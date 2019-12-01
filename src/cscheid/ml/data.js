@@ -1,4 +1,6 @@
-function dataset(training, validation, testing, metadata)
+/** @module cscheid/ml/data */
+
+export function dataset(training, validation, testing, metadata)
 {
   return {
     trainingSet: training,
@@ -7,5 +9,4 @@ function dataset(training, validation, testing, metadata)
     metadata: metadata
   };
 }
-
 

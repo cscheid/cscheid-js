@@ -1,3 +1,5 @@
+/** @module cscheid/linalg */
+
 import * as blas from "./blas.js";
 import * as cscheid from "../cscheid.js";
 
@@ -8,8 +10,8 @@ import * as cscheid from "../cscheid.js";
 
 /**
  * returns v1 + v2
- * @param {v1} input v1
- * @param {v2} input v2
+ * @param {Array} v1 - v1
+ * @param {Array} v2 - v2
  * @returns {Float64Array} v1 + v2
  */
 export function add(v1, v2) {
@@ -23,8 +25,8 @@ export function add(v1, v2) {
 
 /**
  * returns v1 - v2
- * @param {v1} input v1
- * @param {v2} input v2
+ * @param {Array} v1 - v1
+ * @param {Array} v2 - v2
  * @returns {Float64Array} v1 - v2
  */
 export function sub(v1, v2) {
@@ -38,8 +40,8 @@ export function sub(v1, v2) {
 
 /**
  * returns v * k
- * @param {v} input v
- * @param {k} input k
+ * @param {Array} v - v
+ * @param {number} k - k
  * @returns {Float64Array} v * k
  */
 export function scale(v, k) {
@@ -53,12 +55,12 @@ export function scale(v, k) {
 
 /**
  * returns a * b
- * @param {a} input a, m x k
- * @param {b} input b, k x n
- * @param {transa} input if true, use a^T instead of a
- * @param {transb} input if true, use b^T instead of b
+ * @param {Array} a - matrix a, m x k
+ * @param {Array} b - matrix b, k x n
+ * @param {boolean} transa - if true, use a^T instead of a
+ * @param {boolean} transb - if true, use b^T instead of b
  * 
- * @returns {list[Float64Array]} a * b, m x n
+ * @returns {Array} an m x n matrix that equals a * b
  */
 export function matMatMul(a, b, transa, transb) {
   // we've paid no attention to cache locality...
@@ -147,8 +149,8 @@ export function matMatMul(a, b, transa, transb) {
 
 /**
  * returns the squared 2-norm of v
- * @param {v} input v
- * @returns {Number} ||v||_2^2
+ * @param {Array} v - v
+ * @returns {number} ||v||_2^2
  */
 export function norm2(v) {
   return blas.dot(v, v);
@@ -156,9 +158,9 @@ export function norm2(v) {
 
 /**
  * returns the squared distance between v1 and v2
- * @param {v1} input v1
- * @param {v2} input v2
- * @returns {Number} ||v1 - v2||_2^2
+ * @param {Array} v1 - v1
+ * @param {Array} v2 - v2
+ * @returns {number} ||v1 - v2||_2^2
  */
 export function distance2(v1, v2) {
   return norm2(sub(v1, v2));
@@ -171,8 +173,8 @@ export function distance2(v1, v2) {
  * NOTE: Unclear to me right now if we should take square of eps
  * instead...
  *
- * @param {v1} input v1
- * @param {v2} input v2
+ * @param {Array} v1 - v1
+ * @param {Array} v2 - v2
  * @returns {bool} whether v1 and v2 are "relatively-within" eps of
  * one another
  */
@@ -187,8 +189,8 @@ export function vecWithinEpsRel(v1, v2) {
 /**
  * normalizes the passed vector v. This mutates v!
  *
- * @param {v} inout v
- * @returns {Number} length of vector prior to normalization
+ * @param {Array} v - v
+ * @returns {number} length of vector prior to normalization
  */
 export function normalize(v) {
   var n = Math.sqrt(blas.dot(v, v));
@@ -200,9 +202,9 @@ export function normalize(v) {
  * multiplies a matrix by a vector. Assumes matrix
  * is stored as an array of appropriately-sized row vectors
  *
- * @param {m} input the matrix m
- * @param {v} input the vector v
- * @returns {Float64Array} mv
+ * @param {Array} m - the matrix m
+ * @param {Array} v - the vector v
+ * @returns {Float64Array} m * v
  */
 export function matVecMult(m, v) {
   var result = new Float64Array(m.length);
@@ -247,8 +249,8 @@ export function matVecMul(a, v, transm) {
  * returns the transpose of a matrix. Assumes
  * matrix is represented as an array of appropriately-sized row vectors
  *
- * @param {m} input the matrix m
- * @returns {Array[Float64Array]} m^T
+ * @param {Array} m - the matrix m
+ * @returns {Array} m^T
  */
 export function transpose(m) {
   var result = [];
@@ -268,9 +270,9 @@ export function transpose(m) {
 /** 
  * returns the elementwise product of two vectors
  *
- * @param {v1} input v1
- * @param {v2} input v2
- * @returns {Array[Float64Array]} v_i = ( v1_i * v2_i )
+ * @param {Array} v1 - v1
+ * @param {Array} v2 -v2
+ * @returns {Array} v_i = ( v1_i * v2_i )
  */
 export function elementMul(v1, v2) {
   var n = v1.length;
@@ -285,9 +287,9 @@ export function elementMul(v1, v2) {
 /** 
  * returns the Schur (elementwise) product of two matrices
  *
- * @param {v1} input m1
- * @param {v2} input m2
- * @returns {Array[Float64Array]} v_ij = ( v1_ij * v2_ij )
+ * @param {Array} m1 - m1
+ * @param {Array} m2 - m2
+ * @returns {Array} v_ij = ( v1_ij * v2_ij )
  */
 export function schurProduct(m1, m2) {
   return m1.map((row, i) => elementMul(row, m2[i]));
@@ -297,8 +299,8 @@ export function schurProduct(m1, m2) {
  * subtracts the row-wise average from every row. in other words, this
  * centers each column in the matrix
  *
- * @param {m} input the matrix m
- * @returns {Array[Float64Array]} centered matrix
+ * @param {Array} m - the matrix m
+ * @returns {Array} centered matrix
  */
 export function centerColumns(m) {
   var n = m.length;
@@ -635,9 +637,9 @@ export function svd(a, withu, withv, eps, tol) {
 /**
  * Returns a r x c zero matrix 
  *
- * @param {rows} input number of rows in the matrix
- * @param {cols} input number of columns in the matrix
- * @returns {Array[Float64Array]} result
+ * @param {number} rows - number of rows in the matrix
+ * @param {number} cols - number of columns in the matrix
+ * @returns {Array} result
  */
 export function zeros(rows, cols)
 {
@@ -652,9 +654,9 @@ export function zeros(rows, cols)
  * map each element of a matrix through a function, returns
  * new matrix
  *
- * @param {m} input the matrix
- * @param {f} input the function
- * @returns {Array[Float64Array]} the new matrix
+ * @param {Array} m - the matrix
+ * @param {function} f - the function
+ * @returns {Array} the new matrix
  */
 export function matMap(m, f)
 {
@@ -664,9 +666,9 @@ export function matMap(m, f)
 /**
  * scale each row of matrix by entries of vector v.
  * 
- * @param {m} input the matrix with dimensions r x c
- * @param {v} input the vector with dimension r
- * @returns {Array[Float64Array]} the new matrix with dimensions r x c
+ * @param {Array} m - the matrix with dimensions r x c
+ * @param {Array} v - the vector with dimension r
+ * @returns {Array} the new matrix with dimensions r x c
  */
 export function scaleRows(m, v)
 {
@@ -679,9 +681,9 @@ export function scaleRows(m, v)
  * equivalently, replaces each row by element-wise vector
  * multiplication by v.
  *
- * @param {m} input the matrix with dimensions r x c
- * @param {v} input the vector with dimensions c
- * @returns {Array[Float64Array]} the new matrix with dimensions r x c
+ * @param {Array} m - the matrix with dimensions r x c
+ * @param {Array} v - the vector with dimensions c
+ * @returns {Array} the new matrix with dimensions r x c
  */
 export function scaleCols(m, v)
 {
@@ -691,12 +693,12 @@ export function scaleCols(m, v)
 /**
  * lerps from v1 to v2 as t goes from 0 to 1
  * 
- * @param {v1} input v1
- * @param {v2} input v2
- * @param {t} input t
- * @returns {Float64Array} (1-t) v1 + t v2
+ * @param {Array} v1 - v1
+ * @param {Array} v2 - v2
+ * @param {number} t - t
+ * @returns {Float64Array} (1-t) * v1 + t * v2
  */
 export function lerp(v1, v2, t)
 {
-  return v1.map((v, i) => (1-t) * v + t * v2[i]);
+  return v1.map((v, i) => (1 - t) * v + t * v2[i]);
 }

@@ -1,3 +1,5 @@
+/** @module cscheid/legend */
+
 /**
  * A mostly-minimal d3 legend library
  *
@@ -5,6 +7,7 @@
  * but right now this depends on plots.js:create
  */
 
+/*global d3*/
 import * as cscheid from "../cscheid.js";
 
 // TODO symbolSizeLegend
@@ -42,8 +45,6 @@ export function symbolTypeLegend(opts)
   var parent = opts.plot.addGroupToLayer({});
   
   var legendDomain = scale.domain();
-  var scale1 = d3.scaleOrdinal(
-    d3.range(legendDomain.length));
   var posScale = d3.scaleLinear()
       .domain([0, legendDomain.length-1])
       .range(extent);
@@ -65,7 +66,7 @@ export function symbolTypeLegend(opts)
         .type(scale(d))(),
       transform: (d, i) => cscheid.svg.translate(0, posScale(i)),
       stroke: "black",
-      fill: d => d3.lab(70, 0, 0)
+      fill: () => d3.lab(70, 0, 0)
     });
     opts.plot.addLines(legendDomain, {
       group: group,

@@ -1,3 +1,5 @@
+/** @module cscheid/ml/svm */
+
 import * as blas from "../blas.js";
 
 // straight-forward implementation of
@@ -10,7 +12,6 @@ export function svmTrain(data, lambda, learningRate)
     throw new Error("Expected data to be non-empty");
   }
 
-  let eta = learningRate;
   let maxIter = 100;
   let l = data[0].x.length;
   let w = new Float64Array(l);
