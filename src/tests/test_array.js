@@ -75,7 +75,8 @@ function testArrayHistogram()
 {
   function testArrayHistogram(a)
   {
-    var h = array.histogram(a, v => v % ~~(1 + Math.random() * 5));
+    var mod = ~~(1 + Math.random() * 5);
+    var h = array.histogram(a, v => v % mod);
     var s = 0;
     for (let v of h.values()) {
       s += v;
