@@ -1,4 +1,8 @@
-/*global cscheid */
+/** @module cscheid/data */
+
+// THIS IS ALL DEPRECATED
+
+/*global numeric */
 
 import * as cscheid from "../cscheid.js";
 

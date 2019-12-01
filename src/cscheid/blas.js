@@ -1,4 +1,4 @@
-import * as cscheid from "../cscheid.js";
+/** @module cscheid/blas */
 
 // BLAS-like basic linear algebra stuff
 // emphasis on "like": many non-BLAS things here
@@ -11,7 +11,7 @@ import * as cscheid from "../cscheid.js";
 /** 
  * Normalizes the given vector and returns its length. Mutates `v`.
  *
- * @param {v} inout a vector
+ * @param {Array} v - a vector
  * @returns {number} the length of the vector prior to normalization
  */
 export function normalize(v)
@@ -27,10 +27,10 @@ export function normalize(v)
 }
 
 /**
- * Scales given vector by alpha
+ * Scales given vector by alpha. Mutates `x`.
  * 
- * @param {alpha} input scaling factor
- * @param {x} inout the vector
+ * @param {number} alpha - scaling factor
+ * @param {Array} x - the vector
  */
 export function scal(alpha, x)
 {
@@ -43,8 +43,8 @@ export function scal(alpha, x)
 /**
  * Assigns the values in x to y.
  * 
- * @param {x} input the source vector
- * @param {y} output the target vector
+ * @param {Array} x - the source vector
+ * @param {Array} y - the target vector
  */
 export function copy(x, y)
 {
@@ -55,11 +55,11 @@ export function copy(x, y)
 }
 
 /**
- * Assigns to y the value y + alpha x
+ * Assigns to each of `y[i]` the value `alpha * x[i] + y[i]`
  *
- * @param {x} input a vector
- * @param {alpha} input a scaling factor
- * @param {y} inout the output vector
+ * @param {number} alpha - a scaling factor
+ * @param {Array} x - a vector
+ * @param {Array} y - the output vector
  */
 export function axpy(alpha, x, y)
 {
@@ -70,11 +70,12 @@ export function axpy(alpha, x, y)
 }
 
 /**
- * Assigns to y the value b * y + a * x
+ * Assigns to y the value `b * y + a * x`
  *
- * @param {x} input a vector
- * @param {alpha} input a scaling factor
- * @param {y} inout output vector
+ * @param {number} a - a number
+ * @param {Array} x - a vector
+ * @param {number} b - a number
+ * @param {Array} y - a vector
  */
 export function axby(a, x, b, y)
 {
@@ -87,15 +88,15 @@ export function axby(a, x, b, y)
 /**
  * Returns the dot product of x and y
  *
- * @param {x} input a vector
- * @param {y} input another vector
- * @returns {number} the inner product
+ * @param {Array} x - a vector
+ * @param {Array} y - another vector
+ * @returns {number} the dot product
  */
 export function dot(x, y)
 {
   var n = x.length;
   var r = 0;
-  for (var i=0; i<n; ++i) {
+  for (var i = 0; i < n; ++i) {
     r += x[i] * y[i];
   }
   return r;

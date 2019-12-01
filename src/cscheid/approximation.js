@@ -1,3 +1,6 @@
+/** @module cscheid/approximation */
+
+/*global d3*/
 import * as cscheid from "../cscheid.js";
 
 /**
@@ -16,13 +19,12 @@ import * as cscheid from "../cscheid.js";
  * This allows the regularization to affect each vector proportionally
  * to their 
  *
- * @param {data} input 
- *      data.xs: vector of x values
- *      data.ys: vector of y values
- * @param {space} input
- *      list of R->R functions
- * @param {lambda} input L^2 regularization
- * @param {standardize} input if true, standardize input
+ * @param {Object} data - the input data
+ * @param {Array} data.xs - array of x values
+ * @param {Array} data.ys - array of y values 
+ * @param {Array} space - array of of R->R functions
+ * @param {number} lambda - L^2 regularization
+ * @param {boolean} standardize - if true, standardize input
  * @returns {Object}
  *      beta: vector of best-fitting parameters
  *      averages: when standardize === true, returns column averages
@@ -80,7 +82,7 @@ export function leastSquaresLFS(data, space, lambda, standardize)
   var s = cscheid.linalg.svd(matrix);
 
   var effdf = 0;
-  let sigmaCross = s.q.map(function(v, i) {
+  let sigmaCross = s.q.map(function(v) {
     effdf += v * v / (v * v + lambda);
     return 1 / (v + lambda);
   });
@@ -110,12 +112,12 @@ export function leastSquaresLFS(data, space, lambda, standardize)
  * Find the best-fitting polynomial to a set of pointsusing the
  * monomial basis
  *
- * @param {data} input
- *      data.xs: vector of x values
- *      data.ys: vector of y values
- * @param {degree} input the degree of the polynomial to fit
- * @param {lambda} input regularization parameter
- * @param {standardize} input whether or not to standardize the columns
+ * @param {Object} data - the input data
+ * @param {Array}  data.xs - array of x values
+ * @param {Array}  data.ys - vector of y values
+ * @param {number} degree - the degree of the polynomial to fit
+ * @param {number} lambda - regularization parameter
+ * @param {boolean} standardize -input whether or not to standardize the columns
  * @returns {Object} the resulting leastSquaresFLS object
  */
 export function polynomial(data, degree, lambda, standardize)

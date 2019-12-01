@@ -1,6 +1,9 @@
+/** @module cscheid/classify */
+
 import * as cscheid from "../cscheid.js";
 import * as svm from "./classify/svm.js";
 
+/*global d3*/
 export function svmTrain(data, lambda, learningRate)
 {
   return svm.svmTrain(data, lambda, learningRate);

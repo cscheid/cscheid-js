@@ -1,3 +1,5 @@
+/** @module cscheid/caliper */
+
 import * as cscheid from "../cscheid.js";
 
 // caliper is entirely inspired by gage http://teem.sourceforge.net/gage/
@@ -29,7 +31,7 @@ function bSpline(order) {
     result.support = [-0.5 * (order + 1), 0.5 * (order + 1)];
   }
   return result;
-};
+}
 
 export var kernels = {};
 kernels.bSpline = bSpline;
