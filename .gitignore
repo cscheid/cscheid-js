@@ -1,1 +1,7 @@
 *~
+doc
+jsdoc-conf.json
+node_modules
+package-lock.json
+datasets
+
