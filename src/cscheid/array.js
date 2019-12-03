@@ -5,10 +5,9 @@
  * This is _not_ "flatten": it won't work on nested structures.
  *
  * @param {Array} lst - the array of arrays
- * @returns {Array} the concatenated array
+ * @return {Array} the concatenated array
  **/
-export function concat(lst)
-{
+export function concat(lst) {
   return [].concat.apply([], lst);
 }
 
@@ -17,13 +16,13 @@ export function concat(lst)
  * integral to to i")
  *
  * @param {Array} lst - array of numbers
- * @returns {Float64Array} the resulting prefix sum
+ * @return {Float64Array} the resulting prefix sum
 */
-export function prefixSum(lst)
-{
-  var result = new Float64Array(lst.length + 1);
-  for (var i = 1; i <= lst.length; ++i)
+export function prefixSum(lst) {
+  const result = new Float64Array(lst.length + 1);
+  for (let i = 1; i <= lst.length; ++i) {
     result[i] = result[i - 1] + lst[i - 1];
+  }
   return result;
 }
 
@@ -31,13 +30,12 @@ export function prefixSum(lst)
  * returns the array of discrete differences
  *
  * @param {Array} lst - array of numbers
- * @returns {Float64Array} `result[i] = lst[i+1] - lst[i]`, with length
+ * @return {Float64Array} `result[i] = lst[i+1] - lst[i]`, with length
  *   being one less than that of lst
  */
-export function discreteDifferences(lst)
-{
-  var result = new Float64Array(lst.length - 1);
-  for (var i = 0; i < lst.length - 1; ++i) {
+export function discreteDifferences(lst) {
+  const result = new Float64Array(lst.length - 1);
+  for (let i = 0; i < lst.length - 1; ++i) {
     result[i] = lst[i + 1] - lst[i];
   }
   return result;
@@ -45,20 +43,19 @@ export function discreteDifferences(lst)
 
 /**
  * returns the least index such that `lst[index] > target`
- * 
+ *
  * This assumes lst is sorted and numeric.
  * this returns an invalid index if `max(lst) <= target` or `min(lst) > target`
  *
  * @param {Array} lst - array
  * @param {number} target - target
- * @returns {boolean} the least index such that `lst[index] > target`
+ * @return {boolean} the least index such that `lst[index] > target`
  */
-export function lowerBound(lst, target)
-{
-  var lo = 0, hi = lst.length - 1;
+export function lowerBound(lst, target) {
+  let lo = 0; let hi = lst.length - 1;
   while (hi - lo > 1) {
-    var mid = ~~((lo + hi) / 2);
-    var vMid = lst[mid];
+    const mid = ~~((lo + hi) / 2);
+    const vMid = lst[mid];
     if (vMid === target) {
       // this is the only difference between lowerBound and upperBound
       lo = mid;
@@ -68,29 +65,30 @@ export function lowerBound(lst, target)
       lo = mid;
     }
   }
-  if (target >= lst[lst.length - 1])
+  if (target >= lst[lst.length - 1]) {
     return lst.length;
-  if (target < lst[0])
+  }
+  if (target < lst[0]) {
     return 0;
+  }
   return hi;
 }
 
 /**
  * returns the greatest index such that lst[index] < target
- * 
+ *
  * This assumes lst is sorted and numeric.
  * this returns an invalid index if max(lst) < target or min(lst) >= target
  *
  * @param {Array} lst - array
  * @param {number} target - target
- * @returns {boolean} the greatest index such that lst[index] < target
+ * @return {boolean} the greatest index such that lst[index] < target
  */
-export function upperBound(lst, target)
-{
-  var lo = 0, hi = lst.length - 1;
+export function upperBound(lst, target) {
+  let lo = 0; let hi = lst.length - 1;
   while (hi - lo > 1) {
-    var mid = ~~((lo + hi) / 2);
-    var vMid = lst[mid];
+    const mid = ~~((lo + hi) / 2);
+    const vMid = lst[mid];
     if (vMid === target) {
       // this is the only difference between lowerBound and upperBound
       hi = mid;
@@ -100,10 +98,12 @@ export function upperBound(lst, target)
       lo = mid;
     }
   }
-  if (target > lst[lst.length - 1])
+  if (target > lst[lst.length - 1]) {
     return lst.length - 1;
-  if (target <= lst[0])
+  }
+  if (target <= lst[0]) {
     return 0;
+  }
   return lo;
 }
 
@@ -112,15 +112,14 @@ export function upperBound(lst, target)
  *
  * @param {Array} lst - the array to be processed
  * @param {Function} funP - the function that sends array values to histogram bins
- * @returns {Map} the histogram, represented as a map of bin keys to counts
+ * @return {Map} the histogram, represented as a map of bin keys to counts
  */
-export function histogram(lst, funP)
-{
-  let fun = funP ? funP : (d => d);
-  let result = new Map();
-  lst.forEach(k => {
+export function histogram(lst, funP) {
+  const fun = funP ? funP : ((d) => d);
+  const result = new Map();
+  lst.forEach((k) => {
     k = fun(k);
-    let v = result.get(k) || 0;
+    const v = result.get(k) || 0;
     result.set(k, v + 1);
   });
   return result;
@@ -132,11 +131,10 @@ export function histogram(lst, funP)
  * Assumes values are numeric
  *
  * @param {Array} a - the array
- * @returns {number} the sum of the values
+ * @return {number} the sum of the values
  */
-export function sum(a)
-{
-  let n = a.length;
+export function sum(a) {
+  const n = a.length;
   let result = 0;
   for (let i = 0; i < n; ++i) {
     result += a[i];
@@ -150,10 +148,9 @@ export function sum(a)
  * Assumes values are numeric
  *
  * @param {Array} a - the array
- * @returns {Number} the max of the values
+ * @return {Number} the max of the values
  */
-export function max(a)
-{
+export function max(a) {
   return Math.max.apply(null, a);
 }
 
@@ -163,9 +160,8 @@ export function max(a)
  * Assumes values are numeric
  *
  * @param {Array} a - the array
- * @returns {Number} the min of the values
+ * @return {Number} the min of the values
  */
-export function min(a)
-{
+export function min(a) {
   return Math.min.apply(null, a);
 }

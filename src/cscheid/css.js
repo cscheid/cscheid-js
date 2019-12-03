@@ -1,13 +1,13 @@
 /** @module cscheid/css */
 
-import { centeredTextRotate } from "./svg.js";
+import {centeredTextRotate} from './svg.js';
 
 /**
  * Centers text horizontally
  * @param {Object} sel - d3 selection with text
  */
 export function centerHorizontalText(sel) {
-  sel.attr("text-anchor", "middle");
+  sel.attr('text-anchor', 'middle');
 }
 
 /**
@@ -15,6 +15,6 @@ export function centerHorizontalText(sel) {
  * @param {Object} sel - d3 selection with text
  */
 export function centerVerticalText(sel) {
-  sel.attr("text-anchor", "middle")
-    .attr("transform", centeredTextRotate(-90));
+  sel.attr('text-anchor', 'middle')
+      .attr('transform', centeredTextRotate(-90));
 }

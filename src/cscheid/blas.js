@@ -3,21 +3,20 @@
 // BLAS-like basic linear algebra stuff
 // emphasis on "like": many non-BLAS things here
 
-//////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
 // level 1 blas
-// 
+//
 // FIXME: all of this is assuming inc* = 1
 
-/** 
+/**
  * Normalizes the given vector and returns its length. Mutates `v`.
  *
  * @param {Array} v - a vector
- * @returns {number} the length of the vector prior to normalization
+ * @return {number} the length of the vector prior to normalization
  */
-export function normalize(v)
-{
-  var s = 0;
-  for (var i = 0; i < v.length; ++i) {
+export function normalize(v) {
+  let s = 0;
+  for (let i = 0; i < v.length; ++i) {
     s += v[i] * v[i];
   }
   s = Math.sqrt(s);
@@ -28,28 +27,26 @@ export function normalize(v)
 
 /**
  * Scales given vector by alpha. Mutates `x`.
- * 
+ *
  * @param {number} alpha - scaling factor
  * @param {Array} x - the vector
  */
-export function scal(alpha, x)
-{
-  var n = x.length;
-  for (var i = 0; i < n; ++i) {
+export function scal(alpha, x) {
+  const n = x.length;
+  for (let i = 0; i < n; ++i) {
     x[i] *= alpha;
   }
 }
 
 /**
  * Assigns the values in x to y.
- * 
+ *
  * @param {Array} x - the source vector
  * @param {Array} y - the target vector
  */
-export function copy(x, y)
-{
-  var n = x.length;
-  for (var i = 0; i < n; ++i) {
+export function copy(x, y) {
+  const n = x.length;
+  for (let i = 0; i < n; ++i) {
     y[i] = x[i];
   }
 }
@@ -61,10 +58,9 @@ export function copy(x, y)
  * @param {Array} x - a vector
  * @param {Array} y - the output vector
  */
-export function axpy(alpha, x, y)
-{
-  var n = x.length;
-  for (var i = 0; i < n; ++i) {
+export function axpy(alpha, x, y) {
+  const n = x.length;
+  for (let i = 0; i < n; ++i) {
     y[i] = alpha * x[i] + y[i];
   }
 }
@@ -77,10 +73,9 @@ export function axpy(alpha, x, y)
  * @param {number} b - a number
  * @param {Array} y - a vector
  */
-export function axby(a, x, b, y)
-{
-  var n = x.length;
-  for (var i = 0; i < n; ++i) {
+export function axby(a, x, b, y) {
+  const n = x.length;
+  for (let i = 0; i < n; ++i) {
     y[i] = a * x[i] + b * y[i];
   }
 }
@@ -90,13 +85,12 @@ export function axby(a, x, b, y)
  *
  * @param {Array} x - a vector
  * @param {Array} y - another vector
- * @returns {number} the dot product
+ * @return {number} the dot product
  */
-export function dot(x, y)
-{
-  var n = x.length;
-  var r = 0;
-  for (var i = 0; i < n; ++i) {
+export function dot(x, y) {
+  const n = x.length;
+  let r = 0;
+  for (let i = 0; i < n; ++i) {
     r += x[i] * y[i];
   }
   return r;

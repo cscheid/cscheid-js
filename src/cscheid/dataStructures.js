@@ -1,9 +1,8 @@
 /** @module cscheid/dataStructures */
 
 // maxHeap
-export function binaryHeap(values, priorities)
-{
-  var heap = (values || []).slice();
+export function binaryHeap(values, priorities) {
+  const heap = (values || []).slice();
   priorities = (priorities || []).slice();
   function left(i) {
     return 2 * i + 1;
@@ -15,16 +14,16 @@ export function binaryHeap(values, priorities)
     return ~~((i - 1) / 2);
   }
   function swap(i, j) {
-    var tp = priorities[i], tv = heap[i];
+    const tp = priorities[i]; const tv = heap[i];
     priorities[i] = priorities[j];
     priorities[j] = tp;
     heap[i] = heap[j];
     heap[j] = tv;
   }
   function maxHeapify(i) {
-    var l = left(i);
-    var r = right(i);
-    var largest;
+    const l = left(i);
+    const r = right(i);
+    let largest;
     if (l < heap.length && priorities[l] > priorities[i]) {
       largest = l;
     } else {
@@ -41,7 +40,7 @@ export function binaryHeap(values, priorities)
 
   // buildMaxHeap
   if (heap.length) {
-    for (var i = ~~((heap.length - 1) / 2); i >= 0; --i) {
+    for (let i = ~~((heap.length - 1) / 2); i >= 0; --i) {
       maxHeapify(i);
     }
   }
@@ -50,8 +49,9 @@ export function binaryHeap(values, priorities)
   // no one should know the internal index of a value in the heap,
   // so we're making it private.
   function increaseKey(i, key) {
-    if (key < priorities[i])
-      throw new Error("new priority is smaller than current priority");
+    if (key < priorities[i]) {
+      throw new Error('new priority is smaller than current priority');
+    }
     priorities[i] = key;
     while (i > 0 && priorities[parent(i)] < priorities[i]) {
       swap(i, parent(i));
@@ -59,28 +59,31 @@ export function binaryHeap(values, priorities)
     }
   }
 
-  /*eslint no-unused-vars: ["error", { "varsIgnorePattern": "checkHealth" }]*/
+  /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "checkHealth" }]*/
   function checkHealth() {
     for (var i = 0; i < heap.length; ++i) {
-      var ci = [left(i), right(i)];
-      ci.forEach(j => {
-        if (j < heap.length && priorities[j] > priorities[i])
-          throw new Error("checkHealth failed: this is currently not a heap.");
+      const ci = [left(i), right(i)];
+      ci.forEach((j) => {
+        if (j < heap.length && priorities[j] > priorities[i]) {
+          throw new Error('checkHealth failed: this is currently not a heap.');
+        }
       });
     }
   }
-  
+
   return {
     size: function() {
       return heap.length;
     },
     max: function() {
-      return { p: heap[0], priority: priorities[0] };
+      return {p: heap[0], priority: priorities[0]};
     },
     maxPriority: function() {
       return priorities[0];
     },
-    maxPoint: function() { return heap[0]; },
+    maxPoint: function() {
+      return heap[0];
+    },
 
     // max() then pop() is extract-max()
     pop: function() {
@@ -95,6 +98,6 @@ export function binaryHeap(values, priorities)
       heap.push(point);
       priorities.push(-Infinity);
       increaseKey(priorities.length - 1, priority);
-    }
+    },
   };
 }

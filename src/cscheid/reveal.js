@@ -1,26 +1,29 @@
 /** @module cscheid/reveal */
 
-/*global Reveal*/
+/* global Reveal*/
 
-export function setSlideDispatchers(slideDispatchers)
-{
+export function setSlideDispatchers(slideDispatchers) {
   Reveal.addEventListener('fragmentshown', function(event) {
-    var dispatcher = slideDispatchers[event.fragment.parentElement.id];
-    if (!dispatcher)
+    let dispatcher = slideDispatchers[event.fragment.parentElement.id];
+    if (!dispatcher) {
       return undefined;
+    }
     dispatcher = dispatcher['fragmentshown'];
-    if (!dispatcher)
+    if (!dispatcher) {
       return undefined;
+    }
     return dispatcher(event);
   });
 
   Reveal.addEventListener('fragmenthidden', function(event) {
-    var dispatcher = slideDispatchers[event.fragment.parentElement.id];
-    if (!dispatcher)
+    let dispatcher = slideDispatchers[event.fragment.parentElement.id];
+    if (!dispatcher) {
       return undefined;
+    }
     dispatcher = dispatcher['fragmenthidden'];
-    if (!dispatcher)
+    if (!dispatcher) {
       return undefined;
+    }
     return dispatcher(event);
   });
 }

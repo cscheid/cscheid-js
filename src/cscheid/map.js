@@ -6,11 +6,10 @@
  * Returns max and argmax over the map
  * @param {Map} map: the ES6 map
  * @param {(function|undefined)} by: the function to compare against, or identity if undefined;
- * @returns {Object} result.key: the max; result.value: the argmax
+ * @return {Object} result.key: the max; result.value: the argmax
  */
-export function maxArgmax(map, by)
-{
-  let fun = by ? by : (d => d);
+export function maxArgmax(map, by) {
+  const fun = by ? by : ((d) => d);
   let maxV = -Number.MAX_VALUE;
   let maxK;
   map.forEach((v, k) => {
@@ -22,7 +21,7 @@ export function maxArgmax(map, by)
   });
   return {
     key: maxK,
-    value: maxV
+    value: maxV,
   };
 }
 
@@ -30,10 +29,9 @@ export function maxArgmax(map, by)
  * Returns the argmax over the map
  * @param {Map} map: the ES6 map
  * @param {(function|undefined)} by: the function to compare against, or identity if undefined;
- * @returns {Object} one key corresponding to the max value
+ * @return {Object} one key corresponding to the max value
  */
-export function argmax(map, by)
-{
+export function argmax(map, by) {
   return maxArgmax(map, by).key;
 }
 
@@ -41,9 +39,8 @@ export function argmax(map, by)
  * Returns the max over the map
  * @param {Map} map: the ES6 map
  * @param {(function|undefined)} by: the function to compare against, or identity if undefined;
- * @returns {Object} the max value
+ * @return {Object} the max value
  */
-export function max(map, by)
-{
+export function max(map, by) {
   return maxArgmax(map, by).value;
 }

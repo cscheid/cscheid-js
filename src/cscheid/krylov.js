@@ -1,9 +1,9 @@
 /** @module cscheid/krylov */
 
-import * as blas from "./blas.js";
-import * as linalg from "./linalg.js";
-import * as random from "./random.js";
-import * as math from "./math.js";
+import * as blas from './blas.js';
+import * as linalg from './linalg.js';
+import * as random from './random.js';
+import * as math from './math.js';
 
 // higher-level linalg routines for sparse matrices. more generally
 // speaking, for Krylov subspace methods. Most of these functions take
@@ -18,27 +18,26 @@ import * as math from "./math.js";
  * @returns {v} the eigenvector corresponding to the largest eigenvalue
  **/
 
-export function powerIteration(AvFun, d)
-{
-  var v = [];
-  for (var i = 0; i < d; ++i) {
+export function powerIteration(AvFun, d) {
+  let v = [];
+  for (let i = 0; i < d; ++i) {
     v.push(random.normalVariate());
   }
 
   v = new Float64Array(v);
   linalg.normalize(v);
-  var val;
+  let val;
 
   do {
-    var newV = AvFun(v);
+    const newV = AvFun(v);
     val = linalg.normalize(newV);
     var delta = linalg.distance2(newV, v);
     v = newV;
   } while (delta > math.eps);
-  
+
   return {
     vec: v,
-    val: val
+    val: val,
   };
 }
 
@@ -58,12 +57,11 @@ export function powerIteration(AvFun, d)
  * @returns {v} the eigenvector corresponding to the smallest eigenvalue
  **/
 
-export function inversePowerIteration(AvFun, d)
-{
+export function inversePowerIteration(AvFun, d) {
   function inverseSolve(b) {
     return lsqr(AvFun, AvFun, b);
   }
-  var result = powerIteration(inverseSolve, d);
+  const result = powerIteration(inverseSolve, d);
   result.val = 1.0 / result.val;
   return result;
 }
@@ -77,33 +75,31 @@ export function inversePowerIteration(AvFun, d)
  * @param {AvFun} input a function that satisfies v -> A . v
  * @param {ATvFun} input a function that satisfies v -> A^T . v
  * @param {b} input the vector b
- * @returns {x} the vector that minimizes ||Ax - b||_2
+ * @return {x} the vector that minimizes ||Ax - b||_2
  */
-export function lsqr(AvFun, ATvFun, b)
-{
+export function lsqr(AvFun, ATvFun, b) {
   // direct transcription of LSQR on https://web.stanford.edu/class/cme324/paige-saunders2.pdf
   // FIXME: This does _not_ solve the ridge-regression version
 
-  var atol = 1e-4;
+  const atol = 1e-4;
   b = new Float64Array(b);
 
   // (1) (Initialize.)
-  var beta = blas.normalize(b), u = b;
-  var ATu = ATvFun(u);
-  var alpha = blas.normalize(ATu);
-  var v = ATu;
-  var x = new Float64Array(b.length);
-  var phiBar = beta;
-  var rhoBar = alpha;
-  var w = new Float64Array(v);
+  let beta = blas.normalize(b); let u = b;
+  const ATu = ATvFun(u);
+  let alpha = blas.normalize(ATu);
+  let v = ATu;
+  const x = new Float64Array(b.length);
+  let phiBar = beta;
+  let rhoBar = alpha;
+  const w = new Float64Array(v);
 
-  var BkF = 0;
-  var nIter = 0, maxIter = 100;
+  let BkF = 0;
+  let nIter = 0; const maxIter = 100;
 
   do { // (for i = 1,2,3,...) repeat steps 3--6.
-
     // (3) (Continue the bidiagonalization)
-    var tmp = AvFun(v);
+    let tmp = AvFun(v);
     blas.axby(-alpha, u, 1, tmp);
     beta = blas.normalize(tmp);
     u = tmp;
@@ -115,12 +111,12 @@ export function lsqr(AvFun, ATvFun, b)
     BkF += alpha * alpha + beta * beta; // from last paragraph of 5.3
 
     // (4) (Construct and apply next orthogonal transformation)
-    var rho = Math.sqrt(rhoBar * rhoBar + beta * beta);
-    var c = rhoBar / rho;
-    var s = beta / rho;
-    var theta = s * alpha;
+    const rho = Math.sqrt(rhoBar * rhoBar + beta * beta);
+    const c = rhoBar / rho;
+    const s = beta / rho;
+    const theta = s * alpha;
     rhoBar = -c * alpha;
-    var phi = c * phiBar;
+    const phi = c * phiBar;
     phiBar = s * phiBar;
 
     // (5) (Update x, w)
@@ -145,5 +141,4 @@ export function lsqr(AvFun, ATvFun, b)
   } while (stoppingCriterion > atol && nIter < maxIter);
 
   return x;
-
 }

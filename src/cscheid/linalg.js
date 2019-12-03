@@ -1,7 +1,7 @@
 /** @module cscheid/linalg */
 
-import * as blas from "./blas.js";
-import * as cscheid from "../cscheid.js";
+import * as blas from './blas.js';
+import * as cscheid from '../cscheid.js';
 
 /**
  * higher-level linalg interface that doesn't care too much about
@@ -12,12 +12,12 @@ import * as cscheid from "../cscheid.js";
  * returns v1 + v2
  * @param {Array} v1 - v1
  * @param {Array} v2 - v2
- * @returns {Float64Array} v1 + v2
+ * @return {Float64Array} v1 + v2
  */
 export function add(v1, v2) {
-  let n = v1.length;
-  let result = new Float64Array(v1.length);
-  for (var i = 0; i < n; ++i) {
+  const n = v1.length;
+  const result = new Float64Array(v1.length);
+  for (let i = 0; i < n; ++i) {
     result[i] = v1[i] + v2[i];
   }
   return result;
@@ -27,12 +27,12 @@ export function add(v1, v2) {
  * returns v1 - v2
  * @param {Array} v1 - v1
  * @param {Array} v2 - v2
- * @returns {Float64Array} v1 - v2
+ * @return {Float64Array} v1 - v2
  */
 export function sub(v1, v2) {
-  let n = v1.length;
-  let result = new Float64Array(n);
-  for (var i = 0; i < n; ++i) {
+  const n = v1.length;
+  const result = new Float64Array(n);
+  for (let i = 0; i < n; ++i) {
     result[i] = v1[i] - v2[i];
   }
   return result;
@@ -42,12 +42,12 @@ export function sub(v1, v2) {
  * returns v * k
  * @param {Array} v - v
  * @param {number} k - k
- * @returns {Float64Array} v * k
+ * @return {Float64Array} v * k
  */
 export function scale(v, k) {
-  let n = v.length;
-  let result = new Float64Array(n);
-  for (var i = 0; i < n; ++i) {
+  const n = v.length;
+  const result = new Float64Array(n);
+  for (let i = 0; i < n; ++i) {
     result[i] = v[i] * k;
   }
   return result;
@@ -59,21 +59,21 @@ export function scale(v, k) {
  * @param {Array} b - matrix b, k x n
  * @param {boolean} transa - if true, use a^T instead of a
  * @param {boolean} transb - if true, use b^T instead of b
- * 
- * @returns {Array} an m x n matrix that equals a * b
+ *
+ * @return {Array} an m x n matrix that equals a * b
  */
 export function matMatMul(a, b, transa, transb) {
   // we've paid no attention to cache locality...
-  let result = [];
-  let i, j, l;
-  let k, m, n;
-  
+  const result = [];
+  let i; let j; let l;
+  let k; let m; let n;
+
   if (!transa && !transb) {
     m = a.length;
     k = b.length;
     n = b[0].length;
     if (a[0].length !== k) {
-      throw new Error("Matrix dimensions do not match");
+      throw new Error('Matrix dimensions do not match');
     }
     for (i = 0; i < m; ++i) {
       result.push(new Float64Array(n));
@@ -92,7 +92,7 @@ export function matMatMul(a, b, transa, transb) {
     k = a.length;
     n = b[0].length;
     if (b.length !== k) {
-      throw new Error("Matrix dimensions do not match");
+      throw new Error('Matrix dimensions do not match');
     }
     for (i = 0; i < m; ++i) {
       result.push(new Float64Array(n));
@@ -111,7 +111,7 @@ export function matMatMul(a, b, transa, transb) {
     k = a[0].length;
     n = b.length;
     if (b[0].length !== k) {
-      throw new Error("Matrix dimensions do not match");
+      throw new Error('Matrix dimensions do not match');
     }
     for (i = 0; i < m; ++i) {
       result.push(new Float64Array(n));
@@ -131,7 +131,7 @@ export function matMatMul(a, b, transa, transb) {
     k = a.length;
     n = b.length;
     if (b[0].length !== k) {
-      throw new Error("Matrix dimensions do not match");
+      throw new Error('Matrix dimensions do not match');
     }
     for (i = 0; i < m; ++i) {
       result.push(new Float64Array(n));
@@ -150,7 +150,7 @@ export function matMatMul(a, b, transa, transb) {
 /**
  * returns the squared 2-norm of v
  * @param {Array} v - v
- * @returns {number} ||v||_2^2
+ * @return {number} ||v||_2^2
  */
 export function norm2(v) {
   return blas.dot(v, v);
@@ -160,7 +160,7 @@ export function norm2(v) {
  * returns the squared distance between v1 and v2
  * @param {Array} v1 - v1
  * @param {Array} v2 - v2
- * @returns {number} ||v1 - v2||_2^2
+ * @return {number} ||v1 - v2||_2^2
  */
 export function distance2(v1, v2) {
   return norm2(sub(v1, v2));
@@ -175,14 +175,14 @@ export function distance2(v1, v2) {
  *
  * @param {Array} v1 - v1
  * @param {Array} v2 - v2
- * @returns {bool} whether v1 and v2 are "relatively-within" eps of
+ * @return {bool} whether v1 and v2 are "relatively-within" eps of
  * one another
  */
 export function vecWithinEpsRel(v1, v2) {
-  let n1 = norm2(v1),
-      n2 = norm2(v2),
-      d = distance2(v1, v2);
-  let diameter = (cscheid.math.eps / 2) * (n1 + n2);
+  const n1 = norm2(v1);
+  const n2 = norm2(v2);
+  const d = distance2(v1, v2);
+  const diameter = (cscheid.math.eps / 2) * (n1 + n2);
   return d < diameter;
 }
 
@@ -190,10 +190,10 @@ export function vecWithinEpsRel(v1, v2) {
  * normalizes the passed vector v. This mutates v!
  *
  * @param {Array} v - v
- * @returns {number} length of vector prior to normalization
+ * @return {number} length of vector prior to normalization
  */
 export function normalize(v) {
-  var n = Math.sqrt(blas.dot(v, v));
+  const n = Math.sqrt(blas.dot(v, v));
   blas.scal(1.0 / n, v);
   return n;
 }
@@ -204,11 +204,11 @@ export function normalize(v) {
  *
  * @param {Array} m - the matrix m
  * @param {Array} v - the vector v
- * @returns {Float64Array} m * v
+ * @return {Float64Array} m * v
  */
 export function matVecMult(m, v) {
-  var result = new Float64Array(m.length);
-  for (var i = 0; i < m.length; ++i) {
+  const result = new Float64Array(m.length);
+  for (let i = 0; i < m.length; ++i) {
     result[i] = blas.dot(m[i], v);
   }
   return result;
@@ -216,14 +216,14 @@ export function matVecMult(m, v) {
 
 export function matVecMul(a, v, transm) {
   // a is m x n
-  let result, i, j, m, n;
+  let result; let i; let j; let m; let n;
   m = a.length;
   n = a[0].length;
   if (!transm) {
     // a is m x n
     // v has n entries
     if (v.length !== n) {
-      throw new Error("Matrix and vector have incompatible sizes");
+      throw new Error('Matrix and vector have incompatible sizes');
     }
     result = new Float64Array(m);
     for (i = 0; i < a.length; ++i) {
@@ -233,7 +233,7 @@ export function matVecMul(a, v, transm) {
     // a^T is n x m
     // v   has m entries
     if (v.length !== m) {
-      throw new Error("Matrix and vector have incompatible sizes");
+      throw new Error('Matrix and vector have incompatible sizes');
     }
     result = new Float64Array(n);
     for (i = 0; i < m; ++i) {
@@ -250,15 +250,16 @@ export function matVecMul(a, v, transm) {
  * matrix is represented as an array of appropriately-sized row vectors
  *
  * @param {Array} m - the matrix m
- * @returns {Array} m^T
+ * @return {Array} m^T
  */
 export function transpose(m) {
-  var result = [];
-  var nrows = m.length;
-  var ncols = m[0].length;
-  var i, j;
-  for (i = 0; i < ncols; ++i)
+  const result = [];
+  const nrows = m.length;
+  const ncols = m[0].length;
+  let i; let j;
+  for (i = 0; i < ncols; ++i) {
     result.push(new Float64Array(nrows));
+  }
   for (j = 0; j < ncols; ++j) {
     for (i = 0; i < nrows; ++i) {
       result[j][i] = m[i][j];
@@ -267,29 +268,29 @@ export function transpose(m) {
   return result;
 }
 
-/** 
+/**
  * returns the elementwise product of two vectors
  *
  * @param {Array} v1 - v1
  * @param {Array} v2 -v2
- * @returns {Array} v_i = ( v1_i * v2_i )
+ * @return {Array} v_i = ( v1_i * v2_i )
  */
 export function elementMul(v1, v2) {
-  var n = v1.length;
-  var result = new Float64Array(n);
-  var i;
+  const n = v1.length;
+  const result = new Float64Array(n);
+  let i;
   for (i = 0; i < n; ++i) {
     result[i] = v1[i] * v2[i];
   }
   return result;
 }
 
-/** 
+/**
  * returns the Schur (elementwise) product of two matrices
  *
  * @param {Array} m1 - m1
  * @param {Array} m2 - m2
- * @returns {Array} v_ij = ( v1_ij * v2_ij )
+ * @return {Array} v_ij = ( v1_ij * v2_ij )
  */
 export function schurProduct(m1, m2) {
   return m1.map((row, i) => elementMul(row, m2[i]));
@@ -300,18 +301,18 @@ export function schurProduct(m1, m2) {
  * centers each column in the matrix
  *
  * @param {Array} m - the matrix m
- * @returns {Array} centered matrix
+ * @return {Array} centered matrix
  */
 export function centerColumns(m) {
-  var n = m.length;
-  var z = new Float64Array(m[0].length);
-  m.forEach(r => {
+  const n = m.length;
+  const z = new Float64Array(m[0].length);
+  m.forEach((r) => {
     blas.axpy(1 / n, r, z);
   });
-  return m.map(r => sub(r, z));
+  return m.map((r) => sub(r, z));
 }
 
-/** Singular Value Decomposition (c) Danilo Salvati, 
+/** Singular Value Decomposition (c) Danilo Salvati,
  *
  * https://github.com/danilosalvati/svd-js/blob/master/LICENSE
  *
@@ -338,7 +339,7 @@ export function centerColumns(m) {
  *    set equal to B/eps0 where B is the smallest positive number
  *    representable in the computer
  *
- *  @returns {Object} An object containing:
+ *  @return {Object} An object containing:
  *    q: A vector holding the singular values of A; they are
  *      non-negative but not necessarily ordered in decreasing
  *      sequence
@@ -369,7 +370,7 @@ export function svd(a, withu, withv, eps, tol) {
     throw new TypeError('Invalid matrix: m < n');
   }
 
-  let i, j, k, l, l1, c, f, g, h, s, x, y, z;
+  let i; let j; let k; let l; let l1; let c; let f; let g; let h; let s; let x; let y; let z;
 
   g = 0;
   x = 0;
@@ -631,19 +632,18 @@ export function svd(a, withu, withv, eps, tol) {
     if (q[i] < eps) q[i] = 0;
   }
 
-  return { u, q, v };
+  return {u, q, v};
 }
 
 /**
- * Returns a r x c zero matrix 
+ * Returns a r x c zero matrix
  *
  * @param {number} rows - number of rows in the matrix
  * @param {number} cols - number of columns in the matrix
- * @returns {Array} result
+ * @return {Array} result
  */
-export function zeros(rows, cols)
-{
-  let result = [];
+export function zeros(rows, cols) {
+  const result = [];
   for (let i = 0; i < rows; ++i) {
     result.push(new Float64Array(cols));
   }
@@ -656,22 +656,20 @@ export function zeros(rows, cols)
  *
  * @param {Array} m - the matrix
  * @param {function} f - the function
- * @returns {Array} the new matrix
+ * @return {Array} the new matrix
  */
-export function matMap(m, f)
-{
-  return m.map(r => r.map(f));
+export function matMap(m, f) {
+  return m.map((r) => r.map(f));
 }
 
 /**
  * scale each row of matrix by entries of vector v.
- * 
+ *
  * @param {Array} m - the matrix with dimensions r x c
  * @param {Array} v - the vector with dimension r
- * @returns {Array} the new matrix with dimensions r x c
+ * @return {Array} the new matrix with dimensions r x c
  */
-export function scaleRows(m, v)
-{
+export function scaleRows(m, v) {
   return m.map((row, r) => scale(row, v[r]));
 }
 
@@ -683,22 +681,20 @@ export function scaleRows(m, v)
  *
  * @param {Array} m - the matrix with dimensions r x c
  * @param {Array} v - the vector with dimensions c
- * @returns {Array} the new matrix with dimensions r x c
+ * @return {Array} the new matrix with dimensions r x c
  */
-export function scaleCols(m, v)
-{
-  return m.map(row => elementMul(row, v));
+export function scaleCols(m, v) {
+  return m.map((row) => elementMul(row, v));
 }
 
 /**
  * lerps from v1 to v2 as t goes from 0 to 1
- * 
+ *
  * @param {Array} v1 - v1
  * @param {Array} v2 - v2
  * @param {number} t - t
- * @returns {Float64Array} (1-t) * v1 + t * v2
+ * @return {Float64Array} (1-t) * v1 + t * v2
  */
-export function lerp(v1, v2, t)
-{
+export function lerp(v1, v2, t) {
   return v1.map((v, i) => (1 - t) * v + t * v2[i]);
 }

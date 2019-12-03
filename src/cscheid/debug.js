@@ -1,15 +1,15 @@
 /** @module cscheid/debug */
 
-var trace = [];
+let trace = [];
 export function add(obj, attrs) {
-  trace.push({ obj: obj,
-               attrs: attrs });
+  trace.push({obj: obj,
+    attrs: attrs});
 }
 
 export function appendToD3(sel) {
-  for (var i = 0; i < trace.length; ++i) {
+  for (let i = 0; i < trace.length; ++i) {
     sel.append(trace[i].obj)
-      .attrs(trace[i].attrs);
+        .attrs(trace[i].attrs);
   }
 }
 
@@ -29,8 +29,9 @@ export function die(msg) {
 }
 
 export function assert(cond, msg) {
-  if (!cond)
+  if (!cond) {
     die(msg);
+  }
 }
 
 /*

@@ -1,29 +1,29 @@
 /** @module cscheid/random */
 
-import * as cscheid from "../cscheid.js";
+import * as cscheid from '../cscheid.js';
 
 // plain box-muller
-var hasPrevGauss = false, prevGauss;
+let hasPrevGauss = false; let prevGauss;
 export function normalVariate() {
   if (hasPrevGauss) {
     hasPrevGauss = false;
     return prevGauss;
   }
-  var u1 = Math.random(), u2 = Math.random();
-  var r = Math.sqrt(-2 * Math.log(u1));
-  var theta = Math.PI * 2 * u2;
+  const u1 = Math.random(); const u2 = Math.random();
+  const r = Math.sqrt(-2 * Math.log(u1));
+  const theta = Math.PI * 2 * u2;
   hasPrevGauss = true;
   prevGauss = r * Math.cos(theta);
   return r * Math.sin(theta);
 }
 
 export function choose(lst) {
-  var u = ~~(Math.random() * lst.length);
+  const u = ~~(Math.random() * lst.length);
   return lst[u];
 }
 
 export function uniformRange(min, max) {
-  var i = ~~(Math.random() * (max - min));
+  const i = ~~(Math.random() * (max - min));
   return min + i;
 }
 
@@ -31,10 +31,10 @@ export function uniformReal(lo, hi) {
   return Math.random() * (hi - lo) + lo;
 }
 
-//////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
 // A little library for writing random distributions. Meant to be
 // convenient, not efficient.
-// 
+//
 // a "distribution" is a function object in which repeated calls to the
 // function return IID samples from that distribution
 
@@ -62,24 +62,24 @@ distributions.uniform = function(lower, upper) {
 };
 
 distributions.gaussian1D = function(mu, sigma) {
-  return distributions.transform(normalVariate, v => mu + sigma * v);
+  return distributions.transform(normalVariate, (v) => mu + sigma * v);
 };
 
 // axis-aligned variances only for now..
 distributions.gaussian2D = function(mu, sigma) {
-  var n = mu.length;
-  var vecGen = distributions.iidVec(normalVariate, n);
+  const n = mu.length;
+  const vecGen = distributions.iidVec(normalVariate, n);
   return function() {
-    var normalVariate = vecGen();
+    const normalVariate = vecGen();
     return cscheid.linalg.add(mu, cscheid.linalg.elementMul(normalVariate, sigma));
   };
 };
 
 // assumes dist is numeric
 distributions.iidVec = function(dist, k) {
-  return function () {
-    var result = new Float64Array(k);
-    for (var i = 0; i < k; ++i) {
+  return function() {
+    const result = new Float64Array(k);
+    for (let i = 0; i < k; ++i) {
       result[i] = dist();
     }
     return result;
@@ -92,11 +92,11 @@ distributions.mixture = function(ds, ws) {
       return choose(ds)();
     };
   } else {
-    var sumWeights = cscheid.array.prefixSum(ws);
-    var mixtureDist = distributions.uniform(0, sumWeights[sumWeights.length - 1]);
+    const sumWeights = cscheid.array.prefixSum(ws);
+    const mixtureDist = distributions.uniform(0, sumWeights[sumWeights.length - 1]);
     return function() {
-      var u = mixtureDist();
-      var i = cscheid.array.upperBound(sumWeights, u);
+      const u = mixtureDist();
+      const i = cscheid.array.upperBound(sumWeights, u);
       return ds[i]();
     };
   }

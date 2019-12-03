@@ -1,11 +1,11 @@
-import * as testApproximation from "./test_approximation.js";
-import * as testArray         from "./test_array.js";
-import * as testGeometry      from "./test_geometry.js";
-import * as testKrylov        from "./test_krylov.js";
-import * as testLinalg        from "./test_linalg.js";
-import * as testObject        from "./test_object.js";
+import * as testApproximation from './test_approximation.js';
+import * as testArray from './test_array.js';
+import * as testGeometry from './test_geometry.js';
+import * as testKrylov from './test_krylov.js';
+import * as testLinalg from './test_linalg.js';
+import * as testObject from './test_object.js';
 
-import { testModules } from "./utils.js";
+import {testModules} from './utils.js';
 
 export function runTests() {
   testModules([

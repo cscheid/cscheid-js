@@ -7,8 +7,8 @@
 	"browser": true,
 	"es6": true
     },
-    "rules": {
-	"space-infix-ops": ["error", { "int32Hint": false }]
-    },
-    "extends": "eslint:recommended"
+    // "rules": {
+    // 	"space-infix-ops": ["error", { "int32Hint": false }]
+    // },
+    "extends": ["google", "eslint:recommended"]
 }

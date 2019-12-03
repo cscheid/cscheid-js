@@ -1,16 +1,14 @@
-import * as cscheid from "../cscheid.js";
+import * as cscheid from '../cscheid.js';
 
-export let __name__ = "krylov";
-export function runTests()
-{
+export const __name__ = 'krylov';
+export function runTests() {
   testKrylov();
 }
 
-//////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
 // krylov
 
-function testKrylov()
-{
+function testKrylov() {
   testPowerIteration();
   testInversePowerIteration();
 }
@@ -21,13 +19,11 @@ function Av(v) {
   return new Float64Array([v[0] * 2 + v[1], v[0] + v[1] * 2]);
 }
 
-function testPowerIteration()
-{
+function testPowerIteration() {
   cscheid.krylov.powerIteration(Av, 2);
 }
 
-function testInversePowerIteration()
-{
+function testInversePowerIteration() {
   cscheid.krylov.inversePowerIteration(Av, 2);
 }
 

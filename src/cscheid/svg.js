@@ -1,13 +1,13 @@
 /** @module cscheid/svg */
 
-/*global d3*/
+/* global d3*/
 /**
  * Returns a CSS transform string corresponding to the translation by v.x, v.y
  *
  * @param {Object} v - the vector
  * @param {number} v.x - x coordinate
  * @param {number} v.y - y coordinate
- * @returns {string} the CSS transform string
+ * @return {string} the CSS transform string
  */
 export function translateVec(v) {
   return translate(v.x, v.y);
@@ -19,7 +19,7 @@ export function translateVec(v) {
  *
  * @param {(number|Object)} x - either the vector or the x coordinate
  * @param {(number|undefined)} y - the y coordinate
- * @returns {string} the CSS transform string
+ * @return {string} the CSS transform string
  */
 export function translate(x, y) {
   if (y === undefined) {
@@ -36,7 +36,7 @@ export function translate(x, y) {
  * @param {number} r - rotation amount
  * @param {(number|undefined)} x - if present, rotate around this x coordinate
  * @param {(number|undefined)} y - if present, rotate around this y coordinate
- * @returns {string} the CSS transform string
+ * @return {string} the CSS transform string
  */
 export function rotate(r, x, y) {
   if (x === undefined) {
@@ -46,11 +46,10 @@ export function rotate(r, x, y) {
   }
 }
 
-export function useClipPath(clipEl)
-{
+export function useClipPath(clipEl) {
   return function(sel) {
-    var id = clipEl.attr("id");
-    sel.attr("clip-path", `url(#${id})`);
+    const id = clipEl.attr('id');
+    sel.attr('clip-path', `url(#${id})`);
   };
 }
 
@@ -60,33 +59,36 @@ export function useClipPath(clipEl)
 // call it like this:
 // .attr("transform", cscheid.svg.centeredTextRotate(-90))
 
-export function centeredTextRotate(r)
-{
+export function centeredTextRotate(r) {
   return centeredRotate(
-    function() { return this.getAttribute("x") || 0; },
-    function() { return this.getAttribute("y") || 0; },
-    r);
+      function() {
+        return this.getAttribute('x') || 0;
+      },
+      function() {
+        return this.getAttribute('y') || 0;
+      },
+      r);
 }
 
 export function centeredRotate(xAccessor, yAccessor, r) {
   return function(d) {
-    var x = xAccessor.call(this, d);
-    var y = yAccessor.call(this, d);
+    const x = xAccessor.call(this, d);
+    const y = yAccessor.call(this, d);
     return `rotate(${r}, ${x}, ${y})`;
   };
 }
 
-export var categoricalColorScheme = 
-  ["rgb(2, 195, 219)", "rgb(255, 200, 0)", "rgb(244, 68, 82)", 
-   "rgb(186, 216, 60)", "rgb(216, 145, 205)", "rgb(222, 222, 222)"];
+export var categoricalColorScheme =
+  ['rgb(2, 195, 219)', 'rgb(255, 200, 0)', 'rgb(244, 68, 82)',
+    'rgb(186, 216, 60)', 'rgb(216, 145, 205)', 'rgb(222, 222, 222)'];
 
-//////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////
 // extra methods for the selection prototype
 
 if (d3 !== undefined) {
   // http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-the-front-with-d3
   d3.selection.prototype.moveToFront = function() {
-    return this.each(function(){
+    return this.each(function() {
       this.parentNode.appendChild(this);
     });
   };
@@ -94,23 +96,21 @@ if (d3 !== undefined) {
   // http://bl.ocks.org/eesur/4e0a69d57d3bfc8a82c2
   d3.selection.prototype.moveToBack = function() {
     return this.each(function() {
-      var firstChild = this.parentNode.firstChild;
+      const firstChild = this.parentNode.firstChild;
       if (firstChild) {
         this.parentNode.insertBefore(this, firstChild);
       }
     });
   };
 
-  d3.selection.prototype.callReturn = function(callable)
-  {
+  d3.selection.prototype.callReturn = function(callable) {
     return callable(this);
   };
 
-  d3.selection.prototype.enterMany = function(data)
-  {
-    return this.selectAll(".c :not(.c)")
-      .data(data)
-      .enter();
+  d3.selection.prototype.enterMany = function(data) {
+    return this.selectAll('.c :not(.c)')
+        .data(data)
+        .enter();
   };
 }
 

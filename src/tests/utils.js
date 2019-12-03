@@ -1,14 +1,13 @@
-let indent = "";
+let indent = '';
 /**
  * run all tests in the list of modules
  *
  * @param {lst} input list of modules to run
  */
-export function testModules(lst)
-{
-  lst.forEach(mod => {
+export function testModules(lst) {
+  lst.forEach((mod) => {
     console.log(`${indent}Testing module ${mod.__name__}...`);
-    indent = indent + "  ";
+    indent = indent + '  ';
     try {
       mod.runTests();
     } finally {

@@ -1,6 +1,6 @@
 /** @module cscheid/object */
 
-//////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
 // bits of underscore that are generally useful go here
 //
 // from https://github.com/jashkenas/underscore/blob/master/underscore.js
@@ -8,17 +8,17 @@
 //     http://underscorejs.org
 //     (c) 2009-2018 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
 
-var createAssigner = function(keysFunc, defaults) {
+const createAssigner = function(keysFunc, defaults) {
   return function(obj) {
-    var length = arguments.length;
+    const length = arguments.length;
     if (defaults) obj = Object(obj);
     if (length < 2 || obj == null) return obj;
-    for (var index = 1; index < length; index++) {
-      var source = arguments[index],
-          keys = keysFunc(source),
-          l = keys.length;
-      for (var i = 0; i < l; i++) {
-        var key = keys[i];
+    for (let index = 1; index < length; index++) {
+      const source = arguments[index];
+      const keys = keysFunc(source);
+      const l = keys.length;
+      for (let i = 0; i < l; i++) {
+        const key = keys[i];
         if (!defaults || obj[key] === void 0) obj[key] = source[key];
       }
     }
@@ -28,56 +28,57 @@ var createAssigner = function(keysFunc, defaults) {
 
 export function allKeys(obj) {
   if (!isObject(obj)) return [];
-  var keys = [];
-  for (var key in obj) keys.push(key);
+  const keys = [];
+  for (const key in obj) keys.push(key);
   return keys;
 }
 
-export let extend = createAssigner(allKeys);
-export let defaults = createAssigner(allKeys, true);
+export const extend = createAssigner(allKeys);
+export const defaults = createAssigner(allKeys, true);
 
-export function clone(obj)
-{
+export function clone(obj) {
   if (!isObject(obj)) return obj;
   return Array.isArray(obj) ? obj.slice() : extend({}, obj);
 }
 
-//////////////////////////////////////////////////////////////////////////////
-// All I wanted was toArray; I got 50% of underscore instead, and 
+// ////////////////////////////////////////////////////////////////////////////
+// All I wanted was toArray; I got 50% of underscore instead, and
 // it is all so very ugly.
 
-let ObjProto = Object.prototype;
+const ObjProto = Object.prototype;
 // let ArrayProto = Array.prototype;
-let toString = ObjProto.toString;
+const toString = ObjProto.toString;
 // let slice = ArrayProto.slice;
 // let push = ArrayProto.push;
-function identity(v) { return v; }
+function identity(v) {
+  return v;
+}
 
 function shallowProperty(key) {
   return function(obj) {
     return obj == null ? void 0 : obj[key];
   };
 }
-let MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
-let getLength = shallowProperty('length');
+const MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
+const getLength = shallowProperty('length');
 
 function isArrayLike(collection) {
-  var length = getLength(collection);
+  const length = getLength(collection);
   return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
 }
 
 function isMatch(object, attrs) {
-  var ks = keys(attrs), length = ks.length;
+  const ks = keys(attrs); const length = ks.length;
   if (object == null) return !length;
-  var obj = Object(object);
-  for (var i = 0; i < length; i++) {
-    var key = ks[i];
+  const obj = Object(object);
+  for (let i = 0; i < length; i++) {
+    const key = ks[i];
     if (attrs[key] !== obj[key] || !(key in obj)) return false;
   }
   return true;
 }
 
-let extendOwn = createAssigner(keys);
+const extendOwn = createAssigner(keys);
 
 function matcher(attrs) {
   attrs = extendOwn({}, attrs);
@@ -87,8 +88,8 @@ function matcher(attrs) {
 }
 
 function deepGet(obj, path) {
-  var length = path.length;
-  for (var i = 0; i < length; i++) {
+  const length = path.length;
+  for (let i = 0; i < length; i++) {
     if (obj == null) return void 0;
     obj = obj[path[i]];
   }
@@ -114,16 +115,16 @@ function cb(value, context, argCount) {
 var optimizeCb = function(func, context, argCount) {
   if (context === void 0) return func;
   switch (argCount == null ? 3 : argCount) {
-  case 1: return function(value) {
-    return func.call(context, value);
-  };
+    case 1: return function(value) {
+      return func.call(context, value);
+    };
     // The 2-argument case is omitted because we’re not using it.
-  case 3: return function(value, index, collection) {
-    return func.call(context, value, index, collection);
-  };
-  case 4: return function(accumulator, value, index, collection) {
-    return func.call(context, accumulator, value, index, collection);
-  };
+    case 3: return function(value, index, collection) {
+      return func.call(context, value, index, collection);
+    };
+    case 4: return function(accumulator, value, index, collection) {
+      return func.call(context, accumulator, value, index, collection);
+    };
   }
   return function() {
     return func.apply(context, arguments);
@@ -138,10 +139,10 @@ export function keys(obj) {
 }
 
 export function values(obj) {
-  var ks = keys(obj);
-  var length = ks.length;
-  var values = Array(length);
-  for (var i = 0; i < length; i++) {
+  const ks = keys(obj);
+  const length = ks.length;
+  const values = Array(length);
+  for (let i = 0; i < length; i++) {
     values[i] = obj[ks[i]];
   }
   return values;
@@ -149,43 +150,66 @@ export function values(obj) {
 
 export function map(obj, iteratee, context) {
   iteratee = cb(iteratee, context);
-  var ks = !isArrayLike(obj) && keys(obj),
-      length = (ks || obj).length,
-      results = Array(length);
-  for (var index = 0; index < length; index++) {
-    var currentKey = ks ? ks[index] : index;
+  const ks = !isArrayLike(obj) && keys(obj);
+  const length = (ks || obj).length;
+  const results = Array(length);
+  for (let index = 0; index < length; index++) {
+    const currentKey = ks ? ks[index] : index;
     results[index] = iteratee(obj[currentKey], currentKey, obj);
   }
   return results;
 }
 
-export function isArguments(obj) { return toString.call(obj) === '[object Arguments]'; }
-export function isFunction(obj)  { return toString.call(obj) === '[object Function]'; }
-export function isString(obj)    { return toString.call(obj) === '[object String]'; }
-export function isNumber(obj)    { return toString.call(obj) === '[object Number]'; }
-export function isDate(obj)      { return toString.call(obj) === '[object Date]'; }
-export function isRegExp(obj)    { return toString.call(obj) === '[object RegExp]'; }
-export function isError(obj)     { return toString.call(obj) === '[object Error]'; }
-export function isSymbol(obj)    { return toString.call(obj) === '[object Symbol]'; }
-export function isMap(obj)       { return toString.call(obj) === '[object Map]'; }
-export function isWeakMap(obj)   { return toString.call(obj) === '[object WeakMap]'; }
-export function isSet(obj)       { return toString.call(obj) === '[object Set]'; }
-export function isWeakSet(obj)   { return toString.call(obj) === '[object WeakSet]'; }
+export function isArguments(obj) {
+  return toString.call(obj) === '[object Arguments]';
+}
+export function isFunction(obj) {
+  return toString.call(obj) === '[object Function]';
+}
+export function isString(obj) {
+  return toString.call(obj) === '[object String]';
+}
+export function isNumber(obj) {
+  return toString.call(obj) === '[object Number]';
+}
+export function isDate(obj) {
+  return toString.call(obj) === '[object Date]';
+}
+export function isRegExp(obj) {
+  return toString.call(obj) === '[object RegExp]';
+}
+export function isError(obj) {
+  return toString.call(obj) === '[object Error]';
+}
+export function isSymbol(obj) {
+  return toString.call(obj) === '[object Symbol]';
+}
+export function isMap(obj) {
+  return toString.call(obj) === '[object Map]';
+}
+export function isWeakMap(obj) {
+  return toString.call(obj) === '[object WeakMap]';
+}
+export function isSet(obj) {
+  return toString.call(obj) === '[object Set]';
+}
+export function isWeakSet(obj) {
+  return toString.call(obj) === '[object WeakSet]';
+}
 
 export function isObject(obj) {
-  var type = typeof obj;
+  const type = typeof obj;
   return type === 'function' || type === 'object' && !!obj;
 }
 
-var reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
+const reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
 /**
  * Safely create a real, live array from anything iterable.
  *
  * @param {obj} input obj
- * @returns {Array} an array containing the values in obj.
+ * @return {Array} an array containing the values in obj.
  */
-export function toArray(obj)
-{
+export function toArray(obj) {
   if (!obj) {
     return [];
   }
@@ -209,16 +233,15 @@ export function toArray(obj)
  * @param {predicate} input the predicate, or identity
  * @param {context} input the context to be passed to the predicate,
  *   or nothing
- * @returns {boolean} false if any of the elements in obj fail the
+ * @return {boolean} false if any of the elements in obj fail the
  *   predicate, true otherwise
  */
-export function all(obj, predicate, context)
-{
+export function all(obj, predicate, context) {
   predicate = cb(predicate, context);
-  var ks = !isArrayLike(obj) && keys(obj),
-      length = (ks || obj).length;
-  for (var index = 0; index < length; index++) {
-    var currentKey = ks ? ks[index] : index;
+  const ks = !isArrayLike(obj) && keys(obj);
+  const length = (ks || obj).length;
+  for (let index = 0; index < length; index++) {
+    const currentKey = ks ? ks[index] : index;
     if (!predicate(obj[currentKey], currentKey, obj)) {
       return false;
     }
@@ -233,15 +256,15 @@ export function all(obj, predicate, context)
  * @param {predicate} input the predicate, or identity
  * @param {context} input the context to be passed to the predicate,
  *   or nothing
- * @returns {boolean} false if none of the elements in obj pass the
+ * @return {boolean} false if none of the elements in obj pass the
  *   predicate, true otherwise
  */
 export function any(obj, predicate, context) {
   predicate = cb(predicate, context);
-  var ks = !isArrayLike(obj) && keys(obj),
-      length = (ks || obj).length;
-  for (var index = 0; index < length; index++) {
-    var currentKey = ks ? ks[index] : index;
+  const ks = !isArrayLike(obj) && keys(obj);
+  const length = (ks || obj).length;
+  for (let index = 0; index < length; index++) {
+    const currentKey = ks ? ks[index] : index;
     if (predicate(obj[currentKey], currentKey, obj)) {
       return true;
     }

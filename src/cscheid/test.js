@@ -1,6 +1,6 @@
 /** @module cscheid/test */
 
-//////////////////////////////////////////////////////////////////////////////
+// ////////////////////////////////////////////////////////////////////////////
 // Stuff that's useful to write good tests
 //
 // A bit of emphasis on property testing because that's particularly
@@ -9,7 +9,7 @@
 
 export function withGenerators(f, ...generators) {
   return function() {
-    return f(...generators.map(fn => fn()));
+    return f(...generators.map((fn) => fn()));
   };
 }
 

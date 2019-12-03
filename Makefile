@@ -14,5 +14,6 @@ lint:
 	./node_modules/.bin/eslint ./src/
 
 install-deps:
-	npm install jsdoc eslint
+	npm install jsdoc eslint eslint-config-google
+
 

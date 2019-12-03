@@ -1,3 +1,3 @@
 /** @module cscheid/datasets */
 
-export { load as loadMnist } from "./datasets/mnist.js";
+export {load as loadMnist} from './datasets/mnist.js';

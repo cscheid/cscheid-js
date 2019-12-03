@@ -9,7 +9,7 @@ export var eps = 1e-6;
  * @param {function} f - function to run
  */
 export function withEps(thisEps, f) {
-  var oldEps = eps;
+  const oldEps = eps;
   try {
     eps = thisEps;
     return f();
@@ -23,7 +23,7 @@ export function withEps(thisEps, f) {
  * (if absolute "error" is below eps)
  *
  * @param {number} v - value to check
- * @returns {boolean} whether or not value is inside eps-ball
+ * @return {boolean} whether or not value is inside eps-ball
  */
 export function withinEps(v) {
   return Math.abs(v) < eps;
@@ -35,11 +35,11 @@ export function withinEps(v) {
  *
  * @param {number} v1 - v1
  * @param {number} v2 - v2
- * @returns {boolean} whether v1 and v2 are "relative-within" eps of one another
+ * @return {boolean} whether v1 and v2 are "relative-within" eps of one another
  */
 export function withinEpsRel(v1, v2) {
-  let dv = Math.abs(v1 - v2);
-  let diameter = (eps / 2) * (Math.abs(v1) + Math.abs(v2));
+  const dv = Math.abs(v1 - v2);
+  const diameter = (eps / 2) * (Math.abs(v1) + Math.abs(v2));
   return dv < diameter;
 }
 
@@ -60,61 +60,67 @@ export function withinEpsRel(v1, v2) {
  */
 export function quadratic(a, b, c) {
   // numerics is hard.
-  if (a === 0)
-    return { root1: -c / b, root2: -c / b };
-  if (b === 0 && c === 0) {
-    return { root1: 0, root2: 0 };
+  if (a === 0) {
+    return {root1: -c / b, root2: -c / b};
   }
-  var discriminant = b * b - 4 * a * c;
+  if (b === 0 && c === 0) {
+    return {root1: 0, root2: 0};
+  }
+  let discriminant = b * b - 4 * a * c;
   if (discriminant < 0 && withinEps(discriminant)) {
     discriminant = 0;
   }
   if (discriminant === 0) {
-    return { root1: -b / (2 * a), root2: -b / (2 * a) };
+    return {root1: -b / (2 * a), root2: -b / (2 * a)};
   }
-  var d = Math.sqrt(discriminant);
+  const d = Math.sqrt(discriminant);
 
   if (b >= 0) {
-    return { root1: (-b - d) / (2 * a), root2: (2 * c) / (-b - d) };
+    return {root1: (-b - d) / (2 * a), root2: (2 * c) / (-b - d)};
   } else {
-    return { root1: (2 * c) / (-b + d), root2: (-b + d) / (2 * a) };
+    return {root1: (2 * c) / (-b + d), root2: (-b + d) / (2 * a)};
   }
 }
 
 /**
- * finds one root of f, given a bracket in [lo, up]: 
+ * finds one root of f, given a bracket in [lo, up]:
  *   either f(lo) < 0 and f(hi) > 0 or f(lo) > 0 and f(hi) < 0
  *
  * @param {function} f - function to evaluate, Number -> Number
  * @param {number} lo - lower bound of bracket
  * @param {number} up - upper bound of bracket
- * @returns {Object} returns midpoint of bracketing interval with
+ * @return {Object} returns midpoint of bracketing interval with
  * length < eps (o.v) and the value of the function evaluated there
  * (o.fV)
  */
 export function findRoot(f, lo, up) {
-  if (up <= lo)
-    throw new Error("Expected up > lo.");
-  var fLo = f(lo), fUp = f(up);
-  if (fLo < 0 && fUp < 0)
-    throw new Error("Expected either f(lo) or f(up) to be positive.");
-  if (fLo > 0 && fUp > 0)
-    throw new Error("Expected either f(lo) or f(up) to be negative.");
-  var mode = fLo > 0;
-  var d = up - lo;
-  var mid, fMid;
+  if (up <= lo) {
+    throw new Error('Expected up > lo.');
+  }
+  const fLo = f(lo); const fUp = f(up);
+  if (fLo < 0 && fUp < 0) {
+    throw new Error('Expected either f(lo) or f(up) to be positive.');
+  }
+  if (fLo > 0 && fUp > 0) {
+    throw new Error('Expected either f(lo) or f(up) to be negative.');
+  }
+  const mode = fLo > 0;
+  let d = up - lo;
+  let mid; let fMid;
   while (d > eps) {
     mid = (lo + up) / 2;
     fMid = f(mid);
-    if (fMid === 0)
+    if (fMid === 0) {
       return mid;
-    if ((fMid > 0) ^ mode)
+    }
+    if ((fMid > 0) ^ mode) {
       up = mid;
-    else
+    } else {
       lo = mid;
+    }
     d = up - lo;
   }
-  return { v: mid, fV: fMid };
+  return {v: mid, fV: fMid};
 }
 
 /**
@@ -124,29 +130,31 @@ export function findRoot(f, lo, up) {
  * @param {number} lo -lower bound of bracket
  * @param {number} mid - some point inside the bracket
  * @param {number} up - upper bound of bracket
- * @returns {Object} 
- *   - o.v: midpoint of extremum bracket with width < eps; 
- *   - o.fV: function value at extremum; 
+ * @return {Object}
+ *   - o.v: midpoint of extremum bracket with width < eps;
+ *   - o.fV: function value at extremum;
  *   - o.type: "minimum" or "maximum"
  */
 export function findExtremum(f, lo, mid, up) {
-  if (up <= mid)
-    throw new Error("Expected up > mid.");
-  if (mid <= lo)
-    throw new Error("Expected mid > lo.");
-  var fLo = f(lo), fUp = f(up), fMid = f(mid), mode;
+  if (up <= mid) {
+    throw new Error('Expected up > mid.');
+  }
+  if (mid <= lo) {
+    throw new Error('Expected mid > lo.');
+  }
+  let fLo = f(lo); let fUp = f(up); let fMid = f(mid); let mode;
   if (fMid < fLo && fMid < fUp) {
     mode = 1; // "minimum"
   } else if (fMid > fLo && fMid > fUp) {
     mode = 0; // "maximum"
   } else {
-    throw new Error("Expected configuration to be either minimum or maximum.");
+    throw new Error('Expected configuration to be either minimum or maximum.');
   }
-  var d = up - lo;
-  var phi = 0.618;
+  const d = up - lo;
+  const phi = 0.618;
   while (d > eps) {
-    var longLeft = (mid - lo) > (up - mid);
-    var newMid, fNewMid;
+    const longLeft = (mid - lo) > (up - mid);
+    var newMid; var fNewMid;
     if (longLeft) {
       newMid = phi * mid + (1 - phi) * lo;
     } else {
@@ -154,26 +162,26 @@ export function findExtremum(f, lo, mid, up) {
     }
     fNewMid = f(newMid);
     switch ((!longLeft) * 2 + ((fNewMid >= fMid) ^ (!mode))) {
-    case 0:
-      up = mid;         // case 0
-      fUp = fMid;
-      mid = newMid;
-      fMid = fNewMid;
-      break;
-    case 1:
-      lo = newMid;      // case 1
-      fLo = fNewMid;
-      break;
-    case 2:
-      lo = mid;         // case 2
-      fLo = fMid;
-      mid = newMid;
-      fMid = fNewMid;
-      break;
-    case 3:
-      up = mid;         // case 3
-      fUp = fMid;
-      break;
+      case 0:
+        up = mid; // case 0
+        fUp = fMid;
+        mid = newMid;
+        fMid = fNewMid;
+        break;
+      case 1:
+        lo = newMid; // case 1
+        fLo = fNewMid;
+        break;
+      case 2:
+        lo = mid; // case 2
+        fLo = fMid;
+        mid = newMid;
+        fMid = fNewMid;
+        break;
+      case 3:
+        up = mid; // case 3
+        fUp = fMid;
+        break;
     }
     // if (mode === 1) { // minimum
     //     if (longLeft) {
@@ -192,7 +200,7 @@ export function findExtremum(f, lo, mid, up) {
   return {
     v: mid,
     fV: fMid,
-    type: ["maximum", "minimum"][mode]
+    type: ['maximum', 'minimum'][mode],
   };
 }
 
@@ -200,7 +208,7 @@ export function findExtremum(f, lo, mid, up) {
  * convert degrees to radians
  *
  * @param {number} d - value in degrees
- * @returns {number} value in radians
+ * @return {number} value in radians
  */
 export function radians(d) {
   return d * (Math.PI / 180);
@@ -210,7 +218,7 @@ export function radians(d) {
  * convert radians to degrees
  *
  * @param {number} r - value in radians
- * @returns {number} value in degrees
+ * @return {number} value in degrees
  */
 export function degrees(r) {
   return r / (Math.PI / 180);
@@ -222,13 +230,13 @@ export function degrees(r) {
  *
  * @param {number} n - n
  * @param {number} k - k
- * @returns {number} n!/(k! (n - k)!)
+ * @return {number} n!/(k! (n - k)!)
  */
 export function choose(n, k) {
   k = Math.min(k, n - k);
-  var result = 1;
-  var v = n;
-  for (var i = 1; i <= k; ++i) {
+  let result = 1;
+  let v = n;
+  for (let i = 1; i <= k; ++i) {
     result *= v / i;
     v -= 1;
   }
@@ -239,11 +247,12 @@ export function choose(n, k) {
  * returns n! = 1 * 2 * ... * n
  *
  * @param {number} n - n
- * @returns {number} n!
+ * @return {number} n!
  */
 export function fact(n) {
-  var result = 1;
-  for (var i = 1; i <= n; ++i)
+  let result = 1;
+  for (let i = 1; i <= n; ++i) {
     result *= i;
+  }
   return result;
 }
