@@ -7,7 +7,7 @@ export function add(obj, attrs) {
 }
 
 export function appendToD3(sel) {
-  for (var i=0; i<trace.length; ++i) {
+  for (var i = 0; i < trace.length; ++i) {
     sel.append(trace[i].obj)
       .attrs(trace[i].attrs);
   }

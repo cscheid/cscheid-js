@@ -17,11 +17,11 @@
 export function normalize(v)
 {
   var s = 0;
-  for (var i=0; i<v.length; ++i) {
+  for (var i = 0; i < v.length; ++i) {
     s += v[i] * v[i];
   }
   s = Math.sqrt(s);
-  scal(1.0/s, v);
+  scal(1.0 / s, v);
 
   return s;
 }
@@ -35,7 +35,7 @@ export function normalize(v)
 export function scal(alpha, x)
 {
   var n = x.length;
-  for (var i=0; i<n; ++i) {
+  for (var i = 0; i < n; ++i) {
     x[i] *= alpha;
   }
 }
@@ -49,7 +49,7 @@ export function scal(alpha, x)
 export function copy(x, y)
 {
   var n = x.length;
-  for (var i=0; i<n; ++i) {
+  for (var i = 0; i < n; ++i) {
     y[i] = x[i];
   }
 }
@@ -64,7 +64,7 @@ export function copy(x, y)
 export function axpy(alpha, x, y)
 {
   var n = x.length;
-  for (var i=0; i<n; ++i) {
+  for (var i = 0; i < n; ++i) {
     y[i] = alpha * x[i] + y[i];
   }
 }
@@ -80,7 +80,7 @@ export function axpy(alpha, x, y)
 export function axby(a, x, b, y)
 {
   var n = x.length;
-  for (var i=0; i<n; ++i) {
+  for (var i = 0; i < n; ++i) {
     y[i] = a * x[i] + b * y[i];
   }
 }

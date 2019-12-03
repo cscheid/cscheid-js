@@ -46,7 +46,7 @@ export function symbolTypeLegend(opts)
   
   var legendDomain = scale.domain();
   var posScale = d3.scaleLinear()
-      .domain([0, legendDomain.length-1])
+      .domain([0, legendDomain.length - 1])
       .range(extent);
 
   var group = parent.append("g");
@@ -132,7 +132,7 @@ export function colorLegend(opts)
   var nValues = ~~Math.abs((extent[1] - extent[0]) / resolution);
   var legendValues = d3.range(nValues)
       .map(d3.scaleLinear()
-           .domain([0, nValues-1])
+           .domain([0, nValues - 1])
            .range(colorScaleDomainBounds));
 
   var group = parent.append("g");
@@ -153,7 +153,7 @@ export function colorLegend(opts)
       .enter()
       .append("rect")
       .attr("width", size)
-      .attr("height", ~~(Math.abs(legendScale(legendValues[1]) - legendScale(legendValues[0]))+1))
+      .attr("height", ~~(Math.abs(legendScale(legendValues[1]) - legendScale(legendValues[0])) + 1))
       .attr("x", 0)
       .attr("y", legendScale)
       .call(setScale);

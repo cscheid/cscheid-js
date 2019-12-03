@@ -17,7 +17,7 @@ export function svmTrain(data, lambda, learningRate)
   let w = new Float64Array(l);
   let b = 0;
 
-  for (var i=0; i<maxIter; ++i) {
+  for (var i = 0; i < maxIter; ++i) {
     let loss = 0;
     let gVec = new Float64Array(l), g = 0;
     data.forEach(p => {

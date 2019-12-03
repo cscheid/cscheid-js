@@ -3,19 +3,21 @@
 import * as cscheid from "../cscheid.js";
 
 // caliper is entirely inspired by gage http://teem.sourceforge.net/gage/
-// all of caliper's reconstruction are uniformly spaced, so these
-// are uniform b-splines, and they 
+// 
+// all of caliper's reconstruction kernels are uniformly spaced, so
+// these are uniform b-splines
+
 function bSpline(order) {
   var n = order;
   var result = function(x) {
     // http://bigwww.epfl.ch/publications/unser9301.pdf, eq 2.6
     var t1 = 1 / cscheid.math.fact(n);
     var result = 0;
-    for (var j=0; j<=n+1; ++j) {
-      var u = x + (n+1)/2 - j;
+    for (var j = 0; j <= n + 1; ++j) {
+      var u = x + (n + 1) / 2 - j;
       if (u < 0)
         continue;
-      var t2 = cscheid.math.choose(n+1, j);
+      var t2 = cscheid.math.choose(n + 1, j);
       var t3 = Math.pow(u, n);
       result += t1 * t2 * t3;
       t1 *= -1;
@@ -42,13 +44,13 @@ export function makeFunction(array, kernel) {
   return function(s) {
     var ix = ~~s, u, j;
     var result = 0;
-    for (j=Math.min(ix, array.length-1), u = s - j;
-         j>=0 && u <= kernel.support[1];
+    for (j = Math.min(ix, array.length - 1), u = s - j;
+         j >= 0 && u <= kernel.support[1];
          --j, ++u) {
       result += array[j] * kernel(u);
     }
-    for (j=Math.max(ix+1, 0), u = s - j;
-         j<array.length && u >= kernel.support[0];
+    for (j = Math.max(ix + 1, 0), u = s - j;
+         j < array.length && u >= kernel.support[0];
          ++j, --u) {
       result += array[j] * kernel(u);
     }
@@ -78,23 +80,23 @@ export function make2DFunction(array, dims, kernelX, kernelY) {
     function innerLoop(jX, uX) {
       var uY, jY;
       var kx = kernelX(uX);
-      for (jY = Math.min(ixY, dims[1]-1), uY = t - jY;
+      for (jY = Math.min(ixY, dims[1] - 1), uY = t - jY;
            jY >= 0 && uY <= kernelY.support[1];
            --jY, ++uY) {
         result += sampleArray(jX, jY) * kx * kernelY(uY);
       }
-      for (jY=Math.max(ixY+1, 0), uY = t - jY;
+      for (jY = Math.max(ixY + 1, 0), uY = t - jY;
            jY < dims[1] && uY >= kernelY.support[0];
            ++jY, --uY) {
         result += sampleArray(jX, jY) * kx * kernelY(uY);
       }
     }
-    for (jX = Math.min(ixX, dims[0]-1), uX = s - jX;
+    for (jX = Math.min(ixX, dims[0] - 1), uX = s - jX;
          jX >= 0 && uX <= kernelX.support[1];
          --jX, ++uX) {
       innerLoop(jX, uX);
     }
-    for (jX=Math.max(ixX+1, 0), uX = s - jX;
+    for (jX = Math.max(ixX + 1, 0), uX = s - jX;
          jX < dims[0] && uX >= kernelX.support[0];
          ++jX, --uX) {
       innerLoop(jX, uX);

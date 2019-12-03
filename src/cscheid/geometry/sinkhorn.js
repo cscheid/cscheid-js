@@ -43,7 +43,7 @@ export function dualSinkhornDivergence(
   let u = (new Float64Array(r.length)).fill(1 / r.length);
 
   let eM = cscheid.linalg.elementMul, mM = cscheid.linalg.matVecMul;
-  let inv = vec => vec.map(v => 1/v);
+  let inv = vec => vec.map(v => 1 / v);
   while (!cscheid.linalg.vecWithinEpsRel(oldU, u)) {
     oldU = u;
     // u = 1 / (k_tilde.dot(c / u.dot(k)))

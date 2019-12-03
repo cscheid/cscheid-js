@@ -29,14 +29,14 @@ export function grandTour(d)
       v[j] = o2;
     };
   }
-  for (var i=0; i<d-1; ++i) {
-    for (var j=i+1; j<d; ++j) {
-      givensRots.push(makeGivensRot(i, j, Math.random()-0.5));
+  for (var i = 0; i < d - 1; ++i) {
+    for (var j = i + 1; j < d; ++j) {
+      givensRots.push(makeGivensRot(i, j, Math.random() - 0.5));
     }
   }
   
   return function(v, t) {
-    for (var i=0; i<givensRots.length; ++i) {
+    for (var i = 0; i < givensRots.length; ++i) {
       givensRots[i](v, t);
     }
     return v;
@@ -54,7 +54,7 @@ export function CMDS(m)
   let subtractRowAvg = cscheid.linalg.centerColumns;
   m = t(subtractRowAvg(m));
   m = t(subtractRowAvg(m));
-  m = m.map(function(r) { return cscheid.linalg.scale(r, -1/2); });
+  m = m.map(function(r) { return cscheid.linalg.scale(r, -1 / 2); });
   let result = SVD(m);
   return t(t(result.u).map(function(r, i) {
     return cscheid.linalg.scale(r, Math.sqrt(result.q[i]));

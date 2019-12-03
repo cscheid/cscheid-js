@@ -23,7 +23,7 @@ function testGeometrySinkhorn()
 
   // just run this for now, eventually I want to check
   // the results
-  for (var i=0; i<=16; ++i) {
+  for (var i = 0; i <= 16; ++i) {
     cscheid.geometry.sinkhorn.renderPartialImageTransport(
       t1.p, s1, 1, 8, i / 16);
   }

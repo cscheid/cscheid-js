@@ -12,7 +12,7 @@ export function leastSquares(X, y, lambda) {
   var dim = X[0].length;
   var UTy = numeric.dot(y, s.U); // U^T y = y^T U = dot(y, U)
   lambda = lambda || 0.0;
-  for (i=0; i<dim; ++i) {
+  for (i = 0; i < dim; ++i) {
     effdf += Math.pow(s.S[i], 2) / (Math.pow(s.S[i], 2) + lambda);
     if (s.S[i] > cscheid.math.eps) {
       UTy[i] /= (s.S[i] + lambda);
@@ -33,25 +33,25 @@ export function leastSquares(X, y, lambda) {
 export function normalizedLeastSquares(X, y, lambda) {
   var averages = [], stdevs = [];
   var dim = X[0].length, i, j;
-  for (i=0; i<dim; ++i) {
+  for (i = 0; i < dim; ++i) {
     averages[i] = 0;
     stdevs[i] = 0;
   }
-  for (i=0; i<X.length; ++i) {
-    for (j=0; j<dim; ++j) {
+  for (i = 0; i < X.length; ++i) {
+    for (j = 0; j < dim; ++j) {
       var v = X[i][j];
       averages[j] += v;
       stdevs[j] += v * v;
     }
   }
-  for (j=0; j<dim; ++j) {
+  for (j = 0; j < dim; ++j) {
     averages[j] /= X.length;
-    stdevs[j] = Math.pow(stdevs[j]/X.length - Math.pow(averages[j], 2), 0.5);
+    stdevs[j] = Math.pow(stdevs[j] / X.length - Math.pow(averages[j], 2), 0.5);
   }
   var nX = [];
-  for (i=0; i<X.length; ++i) {
+  for (i = 0; i < X.length; ++i) {
     var row = [];
-    for (j=0; j<dim; ++j) {
+    for (j = 0; j < dim; ++j) {
       if (stdevs[j] > cscheid.math.eps) {
         row.push((X[i][j] - averages[j]) / stdevs[j]);
       } else {
@@ -66,7 +66,7 @@ export function normalizedLeastSquares(X, y, lambda) {
     effdf: lstSq.effdf,
     predict: function(x) {
       var nX = [], j;
-      for (j=0; j<dim; ++j) {
+      for (j = 0; j < dim; ++j) {
         if (stdevs[j] > cscheid.math.eps) {
           nX.push((x[j] - averages[j]) / stdevs[j]);
         } else {

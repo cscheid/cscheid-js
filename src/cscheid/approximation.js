@@ -42,7 +42,7 @@ export function leastSquaresLFS(data, space, lambda, standardize)
   
   cscheid.debug.assert(data !== undefined, "need data");
   cscheid.debug.assert(space !== undefined, "need space");
-  var degree = space.length-1;
+  var degree = space.length - 1;
   cscheid.debug.assert(data.xs !== undefined, "need data.xs");
   cscheid.debug.assert(data.ys !== undefined, "need data.ys");
   lambda = lambda || 1e-10;
@@ -62,7 +62,7 @@ export function leastSquaresLFS(data, space, lambda, standardize)
     }
     for (i = 1; i <= degree; ++i) {
       averages[i] /= data.xs.length;
-      stdevs[i] = Math.pow(stdevs[i]/data.xs.length - Math.pow(averages[i], 2), 0.5);
+      stdevs[i] = Math.pow(stdevs[i] / data.xs.length - Math.pow(averages[i], 2), 0.5);
     }
   } else {
     for (i = 0; i <= degree; ++i) {
@@ -124,6 +124,6 @@ export function polynomial(data, degree, lambda, standardize)
 {
   return leastSquaresLFS(
     data,
-    d3.range(0, degree+1).map(d => (x => Math.pow(x, d))),
+    d3.range(0, degree + 1).map(d => (x => Math.pow(x, d))),
     lambda, standardize);
 }

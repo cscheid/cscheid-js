@@ -25,9 +25,9 @@ export function surface(opts)
       .attr("height", height);
 
   var xScale = opts.xScale || d3.scaleLinear().domain([-1.1, 1.1]);
-  xScale.range([margin, width-margin]);
+  xScale.range([margin, width - margin]);
   var yScale = opts.yScale || d3.scaleLinear().domain([-0.55, 0.55]);
-  yScale.range([height-margin, margin]);
+  yScale.range([height - margin, margin]);
 
   var axisGroup = svg.append("g");
   var xAxis = d3.axisBottom(xScale);
@@ -175,7 +175,7 @@ export function surface(opts)
         f = [f];
       steps = steps || 100;
       var s = d3.scaleLinear().domain([0, steps]).range(xScale.domain());
-      var data = d3.range(steps+1);
+      var data = d3.range(steps + 1);
 
       return svg.append("g").selectAll("path")
         .data(f)
@@ -367,7 +367,7 @@ export function create(div, width, height, opts) {
       if (!warnedAboutAspectRatio &&
           !math.withEps(0.01, () => math.withinEpsRel(sx, sy))) {
         warnedAboutAspectRatio = true;
-        console.warn("Drawing arrows in a non-square axis pair of aspect ratio ", sx/sy);
+        console.warn("Drawing arrows in a non-square axis pair of aspect ratio ", sx / sy);
       }
 
       var arrowHeadScale = (accessors.arrowHeadScale || function() { return 1; })(d);
@@ -692,10 +692,10 @@ export function create(div, width, height, opts) {
               .tween("attr.d", function() {
                 return function(t) {
                   blas.copy(newScalarField, tweenField);
-                  blas.axby(1-t, oldScalarField, t, tweenField);
+                  blas.axby(1 - t, oldScalarField, t, tweenField);
 
                   blas.copy(newContourValues, tweenContour);
-                  blas.axby(1-t, oldContourValues, t, tweenContour);
+                  blas.axby(1 - t, oldContourValues, t, tweenContour);
 
                   var c = d3.contours()
                       .size(scalarField.dims)
@@ -763,7 +763,7 @@ export function create(div, width, height, opts) {
               var x2 = d3.scaleLinear().domain([0, lineResolution]).range(xScale.domain());
               var pts = [];
               var value = that.accessors.value(d,ix);
-              for (var i=0; i<lineResolution; ++i) {
+              for (var i = 0; i < lineResolution; ++i) {
                 var x = x2(i);
                 pts.push({x: x, y: value(x)});
               }

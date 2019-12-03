@@ -60,6 +60,6 @@ function testMul()
 function testMuls()
 {
   // p < 0.05 ought to be enough for everyone, right?
-  for (var i=0; i<20; ++i)
+  for (var i = 0; i < 20; ++i)
     testMul();
 }

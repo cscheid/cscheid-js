@@ -41,7 +41,7 @@ export function binaryHeap(values, priorities)
 
   // buildMaxHeap
   if (heap.length) {
-    for (var i=~~((heap.length - 1) / 2); i>=0; --i) {
+    for (var i = ~~((heap.length - 1) / 2); i >= 0; --i) {
       maxHeapify(i);
     }
   }
@@ -61,7 +61,7 @@ export function binaryHeap(values, priorities)
 
   /*eslint no-unused-vars: ["error", { "varsIgnorePattern": "checkHealth" }]*/
   function checkHealth() {
-    for (var i=0; i<heap.length; ++i) {
+    for (var i = 0; i < heap.length; ++i) {
       var ci = [left(i), right(i)];
       ci.forEach(j => {
         if (j < heap.length && priorities[j] > priorities[i])
@@ -84,8 +84,8 @@ export function binaryHeap(values, priorities)
 
     // max() then pop() is extract-max()
     pop: function() {
-      heap[0] = heap[heap.length-1];
-      priorities[0] = priorities[priorities.length-1];
+      heap[0] = heap[heap.length - 1];
+      priorities[0] = priorities[priorities.length - 1];
       heap.pop();
       priorities.pop();
       maxHeapify(0);
@@ -94,7 +94,7 @@ export function binaryHeap(values, priorities)
     add: function(point, priority) {
       heap.push(point);
       priorities.push(-Infinity);
-      increaseKey(priorities.length-1, priority);
+      increaseKey(priorities.length - 1, priority);
     }
   };
 }

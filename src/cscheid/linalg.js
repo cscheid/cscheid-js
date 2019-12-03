@@ -17,7 +17,7 @@ import * as cscheid from "../cscheid.js";
 export function add(v1, v2) {
   let n = v1.length;
   let result = new Float64Array(v1.length);
-  for (var i=0; i<n; ++i) {
+  for (var i = 0; i < n; ++i) {
     result[i] = v1[i] + v2[i];
   }
   return result;
@@ -32,7 +32,7 @@ export function add(v1, v2) {
 export function sub(v1, v2) {
   let n = v1.length;
   let result = new Float64Array(n);
-  for (var i=0; i<n; ++i) {
+  for (var i = 0; i < n; ++i) {
     result[i] = v1[i] - v2[i];
   }
   return result;
@@ -47,7 +47,7 @@ export function sub(v1, v2) {
 export function scale(v, k) {
   let n = v.length;
   let result = new Float64Array(n);
-  for (var i=0; i<n; ++i) {
+  for (var i = 0; i < n; ++i) {
     result[i] = v[i] * k;
   }
   return result;
@@ -75,12 +75,12 @@ export function matMatMul(a, b, transa, transb) {
     if (a[0].length !== k) {
       throw new Error("Matrix dimensions do not match");
     }
-    for (i=0; i<m; ++i) {
+    for (i = 0; i < m; ++i) {
       result.push(new Float64Array(n));
     }
-    for (i=0; i<m; ++i) {
-      for (j=0; j<n; ++j) {
-        for (l=0; l<k; ++l) {
+    for (i = 0; i < m; ++i) {
+      for (j = 0; j < n; ++j) {
+        for (l = 0; l < k; ++l) {
           result[i][j] += a[i][l] * b[l][j];
         }
       }
@@ -94,12 +94,12 @@ export function matMatMul(a, b, transa, transb) {
     if (b.length !== k) {
       throw new Error("Matrix dimensions do not match");
     }
-    for (i=0; i<m; ++i) {
+    for (i = 0; i < m; ++i) {
       result.push(new Float64Array(n));
     }
-    for (i=0; i<m; ++i) {
-      for (j=0; j<n; ++j) {
-        for (l=0; l<k; ++l) {
+    for (i = 0; i < m; ++i) {
+      for (j = 0; j < n; ++j) {
+        for (l = 0; l < k; ++l) {
           result[i][j] += a[l][i] * b[l][j];
         }
       }
@@ -113,12 +113,12 @@ export function matMatMul(a, b, transa, transb) {
     if (b[0].length !== k) {
       throw new Error("Matrix dimensions do not match");
     }
-    for (i=0; i<m; ++i) {
+    for (i = 0; i < m; ++i) {
       result.push(new Float64Array(n));
     }
-    for (i=0; i<m; ++i) {
-      for (j=0; j<n; ++j) {
-        for (l=0; l<k; ++l) {
+    for (i = 0; i < m; ++i) {
+      for (j = 0; j < n; ++j) {
+        for (l = 0; l < k; ++l) {
           result[i][j] += a[i][l] * b[j][l];
         }
       }
@@ -133,12 +133,12 @@ export function matMatMul(a, b, transa, transb) {
     if (b[0].length !== k) {
       throw new Error("Matrix dimensions do not match");
     }
-    for (i=0; i<m; ++i) {
+    for (i = 0; i < m; ++i) {
       result.push(new Float64Array(n));
     }
-    for (i=0; i<m; ++i) {
-      for (j=0; j<n; ++j) {
-        for (l=0; l<k; ++l) {
+    for (i = 0; i < m; ++i) {
+      for (j = 0; j < n; ++j) {
+        for (l = 0; l < k; ++l) {
           result[i][j] += a[l][i] * b[j][l];
         }
       }
@@ -182,7 +182,7 @@ export function vecWithinEpsRel(v1, v2) {
   let n1 = norm2(v1),
       n2 = norm2(v2),
       d = distance2(v1, v2);
-  let diameter = (cscheid.math.eps/2) * (n1 + n2);
+  let diameter = (cscheid.math.eps / 2) * (n1 + n2);
   return d < diameter;
 }
 
@@ -194,7 +194,7 @@ export function vecWithinEpsRel(v1, v2) {
  */
 export function normalize(v) {
   var n = Math.sqrt(blas.dot(v, v));
-  blas.scal(1.0/n, v);
+  blas.scal(1.0 / n, v);
   return n;
 }
 
@@ -208,7 +208,7 @@ export function normalize(v) {
  */
 export function matVecMult(m, v) {
   var result = new Float64Array(m.length);
-  for (var i=0; i<m.length; ++i) {
+  for (var i = 0; i < m.length; ++i) {
     result[i] = blas.dot(m[i], v);
   }
   return result;
@@ -257,10 +257,10 @@ export function transpose(m) {
   var nrows = m.length;
   var ncols = m[0].length;
   var i, j;
-  for (i=0; i<ncols; ++i)
+  for (i = 0; i < ncols; ++i)
     result.push(new Float64Array(nrows));
-  for (j=0; j<ncols; ++j) {
-    for (i=0; i<nrows; ++i) {
+  for (j = 0; j < ncols; ++j) {
+    for (i = 0; i < nrows; ++i) {
       result[j][i] = m[i][j];
     }
   }
@@ -278,7 +278,7 @@ export function elementMul(v1, v2) {
   var n = v1.length;
   var result = new Float64Array(n);
   var i;
-  for (i=0; i<n; ++i) {
+  for (i = 0; i < n; ++i) {
     result[i] = v1[i] * v2[i];
   }
   return result;
@@ -306,7 +306,7 @@ export function centerColumns(m) {
   var n = m.length;
   var z = new Float64Array(m[0].length);
   m.forEach(r => {
-    blas.axpy(1/n, r, z);
+    blas.axpy(1 / n, r, z);
   });
   return m.map(r => sub(r, z));
 }

@@ -77,7 +77,7 @@ Vec2.prototype.distance = function(other) {
   return this.minus(other).length();
 };
 Vec2.prototype.unit = function() {
-  return this.scale(1/(this.length() || 1));
+  return this.scale(1 / (this.length() || 1));
 };
 Vec2.prototype.unitMutate = function() {
   var l = this.length() || 1;
@@ -97,8 +97,8 @@ Vec2.prototype.set = function(x, y) {
   }
 };
 Vec2.prototype.lerp = function(u, other) {
-  return vec2(u * other.x + (1-u) * this.x,
-              u * other.y + (1-u) * this.y);
+  return vec2(u * other.x + (1 - u) * this.x,
+              u * other.y + (1 - u) * this.y);
 };
 Vec2.prototype.project = function(other) {
   other = other.unit();
@@ -150,10 +150,10 @@ export function transform(m11, m12, tx, m21, m22, ty) {
 
 Transform.prototype.transform = function(other) {
   var t = new Float32Array(9);
-  for (var i=0; i<3; ++i)
-    for (var j=0; j<3; ++j)
-      for (var k=0; k<3; ++k) {
-        t[i*3+j] = this.m[i*3+k] * other.m[k*3+j];
+  for (var i = 0; i < 3; ++i)
+    for (var j = 0; j < 3; ++j)
+      for (var k = 0; k < 3; ++k) {
+        t[i * 3 + j] = this.m[i * 3 + k] * other.m[k * 3 + j];
       }
   return transform(t);
 };
@@ -267,7 +267,7 @@ export function Ellipse(a, b, c, d, e, f)
     this.e = e;
     this.f = f;
   }
-  this.gradient = transform(2*a, c, d, c, 2*b, e);
+  this.gradient = transform(2 * a, c, d, c, 2 * b, e);
   this.center = this.gradient.inverse().apply(vec2(0,0));
   // var ys = math.quadratic(b-c*c/4*a, e-c*d/2*a, f-d*d/4*a);
   // var xs = math.quadratic(a-c*c/4*b, d-c*e/2*b, f-e*e/4*b);
@@ -281,8 +281,8 @@ export function ellipse(a,b,c,d,e,f) {
 }
 
 Ellipse.prototype.value = function(p) {
-  return this.a*p.x*p.x + this.b*p.y*p.y + this.c*p.x*p.y
-    + this.d*p.x + this.e*p.y + this.f;
+  return this.a * p.x * p.x + this.b * p.y * p.y + this.c * p.x * p.y
+    + this.d * p.x + this.e * p.y + this.f;
 };
 Ellipse.prototype.contains = function(p) {
   return this.value(p) < 0;
@@ -290,27 +290,27 @@ Ellipse.prototype.contains = function(p) {
 Ellipse.prototype.transform = function(t) {
   var i = t.inverse();
   var [m00, m01, m02, m10, m11, m12] = i.m;
-  var aa = this.a*m00*m00 + this.b*m10*m10 + this.c*m00*m10;
-  var bb = this.a*m01*m01 + this.b*m11*m11 + this.c*m01*m11;
-  var cc = 2*this.a*m00*m01 + 2*this.b*m10*m11 
-      + this.c*(m00*m11 + m01*m10);
-  var dd = 2*this.a*m00*m02 + 2*this.b*m10*m12 
-      + this.c*(m00*m12 + m02*m10) + this.d*m00 + this.e*m10;
-  var ee = 2*this.a*m01*m02 + 2*this.b*m11*m12 
-      + this.c*(m01*m12 + m02*m11) + this.d*m01 + this.e*m11;
-  var ff = this.a*m02*m02 + this.b*m12*m12 + this.c*m02*m12 
-      + this.d*m02 + this.e*m12 + this.f;
+  var aa = this.a * m00 * m00 + this.b * m10 * m10 + this.c * m00 * m10;
+  var bb = this.a * m01 * m01 + this.b * m11 * m11 + this.c * m01 * m11;
+  var cc = 2 * this.a * m00 * m01 + 2 * this.b * m10 * m11 
+      + this.c * (m00 * m11 + m01 * m10);
+  var dd = 2 * this.a * m00 * m02 + 2 * this.b * m10 * m12 
+      + this.c * (m00 * m12 + m02 * m10) + this.d * m00 + this.e * m10;
+  var ee = 2 * this.a * m01 * m02 + 2 * this.b * m11 * m12 
+      + this.c * (m01 * m12 + m02 * m11) + this.d * m01 + this.e * m11;
+  var ff = this.a * m02 * m02 + this.b * m12 * m12 + this.c * m02 * m12 
+      + this.d * m02 + this.e * m12 + this.f;
   return ellipse(aa, bb, cc, dd, ee, ff);
 };
     
 Ellipse.prototype.lineIntersection = function(c, p) {
   var pc = p.minus(c);
-  var u2 = this.a*Math.pow(pc.x, 2) + this.b*Math.pow(pc.y, 2) + this.c*pc.x*pc.y;
-  var u1 = 2*this.a*c.x*pc.x + 2*this.b*c.y*pc.y 
-      + this.c*c.y*pc.x +   this.c*c.x*pc.y + this.d*pc.x 
-      + this.e*pc.y;
-  var u0 = this.a*Math.pow(c.x, 2) + this.b*Math.pow(c.y, 2) + this.c*c.x*c.y 
-      + this.d*c.x + this.e*c.y + this.f;
+  var u2 = this.a * Math.pow(pc.x, 2) + this.b * Math.pow(pc.y, 2) + this.c * pc.x * pc.y;
+  var u1 = 2 * this.a * c.x * pc.x + 2 * this.b * c.y * pc.y 
+      + this.c * c.y * pc.x +   this.c * c.x * pc.y + this.d * pc.x 
+      + this.e * pc.y;
+  var u0 = this.a * Math.pow(c.x, 2) + this.b * Math.pow(c.y, 2) + this.c * c.x * c.y 
+      + this.d * c.x + this.e * c.y + this.f;
   var result = [];
   var sols = math.quadratic(u2, u1, u0);
   if (isNaN(sols.root1) || isNaN(sols.root2))
@@ -359,7 +359,7 @@ Ellipse.prototype.majorAxis = function() {
   var h = this.hessian();
   var minorAxis = h.powerMethod();
   var majorAxis = vec2(minorAxis.y, -minorAxis.x);
-  var length = Math.pow(1/(h.apply(majorAxis).length() / 2), 0.5);
+  var length = Math.pow(1 / (h.apply(majorAxis).length() / 2), 0.5);
   majorAxis = majorAxis.scale(length);
   return [this.center.plus(majorAxis), this.center.minus(majorAxis)];
 };

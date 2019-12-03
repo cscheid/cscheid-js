@@ -23,7 +23,7 @@ export function prefixSum(lst)
 {
   var result = new Float64Array(lst.length + 1);
   for (var i = 1; i <= lst.length; ++i)
-    result[i] = result[i-1] + lst[i-1];
+    result[i] = result[i - 1] + lst[i - 1];
   return result;
 }
 
@@ -38,7 +38,7 @@ export function discreteDifferences(lst)
 {
   var result = new Float64Array(lst.length - 1);
   for (var i = 0; i < lst.length - 1; ++i) {
-    result[i] = lst[i+1] - lst[i];
+    result[i] = lst[i + 1] - lst[i];
   }
   return result;
 }
@@ -101,7 +101,7 @@ export function upperBound(lst, target)
     }
   }
   if (target > lst[lst.length - 1])
-    return lst.length-1;
+    return lst.length - 1;
   if (target <= lst[0])
     return 0;
   return lo;

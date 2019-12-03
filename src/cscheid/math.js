@@ -39,7 +39,7 @@ export function withinEps(v) {
  */
 export function withinEpsRel(v1, v2) {
   let dv = Math.abs(v1 - v2);
-  let diameter = (eps/2) * (Math.abs(v1) + Math.abs(v2));
+  let diameter = (eps / 2) * (Math.abs(v1) + Math.abs(v2));
   return dv < diameter;
 }
 
@@ -61,7 +61,7 @@ export function withinEpsRel(v1, v2) {
 export function quadratic(a, b, c) {
   // numerics is hard.
   if (a === 0)
-    return { root1: -c/b, root2: -c/b };
+    return { root1: -c / b, root2: -c / b };
   if (b === 0 && c === 0) {
     return { root1: 0, root2: 0 };
   }
@@ -70,7 +70,7 @@ export function quadratic(a, b, c) {
     discriminant = 0;
   }
   if (discriminant === 0) {
-    return { root1: -b/(2*a), root2: -b/(2*a) };
+    return { root1: -b / (2 * a), root2: -b / (2 * a) };
   }
   var d = Math.sqrt(discriminant);
 
@@ -203,7 +203,7 @@ export function findExtremum(f, lo, mid, up) {
  * @returns {number} value in radians
  */
 export function radians(d) {
-  return d * (Math.PI/180);
+  return d * (Math.PI / 180);
 }
 
 /**
@@ -213,7 +213,7 @@ export function radians(d) {
  * @returns {number} value in degrees
  */
 export function degrees(r) {
-  return r / (Math.PI/180);
+  return r / (Math.PI / 180);
 }
 
 /**
@@ -225,10 +225,10 @@ export function degrees(r) {
  * @returns {number} n!/(k! (n - k)!)
  */
 export function choose(n, k) {
-  k = Math.min(k, n-k);
+  k = Math.min(k, n - k);
   var result = 1;
   var v = n;
-  for (var i=1; i<=k; ++i) {
+  for (var i = 1; i <= k; ++i) {
     result *= v / i;
     v -= 1;
   }
@@ -243,7 +243,7 @@ export function choose(n, k) {
  */
 export function fact(n) {
   var result = 1;
-  for (var i=1; i<=n; ++i)
+  for (var i = 1; i <= n; ++i)
     result *= i;
   return result;
 }

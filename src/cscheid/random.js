@@ -79,7 +79,7 @@ distributions.gaussian2D = function(mu, sigma) {
 distributions.iidVec = function(dist, k) {
   return function () {
     var result = new Float64Array(k);
-    for (var i=0; i<k; ++i) {
+    for (var i = 0; i < k; ++i) {
       result[i] = dist();
     }
     return result;
@@ -93,7 +93,7 @@ distributions.mixture = function(ds, ws) {
     };
   } else {
     var sumWeights = cscheid.array.prefixSum(ws);
-    var mixtureDist = distributions.uniform(0, sumWeights[sumWeights.length-1]);
+    var mixtureDist = distributions.uniform(0, sumWeights[sumWeights.length - 1]);
     return function() {
       var u = mixtureDist();
       var i = cscheid.array.upperBound(sumWeights, u);

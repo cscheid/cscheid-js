@@ -21,7 +21,7 @@ import * as math from "./math.js";
 export function powerIteration(AvFun, d)
 {
   var v = [];
-  for (var i=0; i<d; ++i) {
+  for (var i = 0; i < d; ++i) {
     v.push(random.normalVariate());
   }
 

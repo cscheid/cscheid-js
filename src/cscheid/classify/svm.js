@@ -29,7 +29,7 @@ export function svmTrain(data, lambda, learningRate, momentum)
   
   let loss;
   let gVec;
-  for (var i=0; i<maxIter; ++i) {
+  for (var i = 0; i < maxIter; ++i) {
     loss = 0;
     gVec = new Float64Array(l);
     let g = 0;

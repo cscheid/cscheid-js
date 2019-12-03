@@ -20,7 +20,7 @@ function generateRandomArray(size, elSize)
   elSize = elSize || 4;
   var n = ~~(Math.random() * size);
   var result = [];
-  for (var i=0; i<n; ++i) {
+  for (var i = 0; i < n; ++i) {
     result.push(~~(Math.random() * elSize));
   }
   return result;
@@ -53,7 +53,7 @@ function testArraySumPrefixSumProperties(a)
 {
   var s = cscheid.array.sum(a),
       prefixSum = cscheid.array.prefixSum(a);
-  assert(s === prefixSum[prefixSum.length-1]);
+  assert(s === prefixSum[prefixSum.length - 1]);
   assert(cscheid.object.all(
     array.discreteDifferences(prefixSum)
       .map((v, i) => v === a[i])));
