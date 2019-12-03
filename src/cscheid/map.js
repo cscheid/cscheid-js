@@ -5,7 +5,8 @@
 /**
  * Returns max and argmax over the map
  * @param {Map} map: the ES6 map
- * @param {(function|undefined)} by: the function to compare against, or identity if undefined;
+ * @param {(function|undefined)} by: the function to compare against,
+ * or identity if undefined;
  * @return {Object} result.key: the max; result.value: the argmax
  */
 export function maxArgmax(map, by) {
@@ -28,7 +29,8 @@ export function maxArgmax(map, by) {
 /**
  * Returns the argmax over the map
  * @param {Map} map: the ES6 map
- * @param {(function|undefined)} by: the function to compare against, or identity if undefined;
+ * @param {(function|undefined)} by: the function to compare against,
+ * or identity if undefined;
  * @return {Object} one key corresponding to the max value
  */
 export function argmax(map, by) {
@@ -38,7 +40,8 @@ export function argmax(map, by) {
 /**
  * Returns the max over the map
  * @param {Map} map: the ES6 map
- * @param {(function|undefined)} by: the function to compare against, or identity if undefined;
+ * @param {(function|undefined)} by: the function to compare against,
+ * or identity if undefined;
  * @return {Object} the max value
  */
 export function max(map, by) {

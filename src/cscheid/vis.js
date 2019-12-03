@@ -47,7 +47,7 @@ export function grandTour(d) {
 //
 // this expects squared distances or inner products!
 export function CMDS(m) {
-  const SVD = cscheid.linalg.svd;
+  const svd = cscheid.linalg.svd;
   const t = cscheid.linalg.transpose;
   const subtractRowAvg = cscheid.linalg.centerColumns;
   m = t(subtractRowAvg(m));
@@ -55,7 +55,7 @@ export function CMDS(m) {
   m = m.map(function(r) {
     return cscheid.linalg.scale(r, -1 / 2);
   });
-  const result = SVD(m);
+  const result = svd(m);
   return t(t(result.u).map(function(r, i) {
     return cscheid.linalg.scale(r, Math.sqrt(result.q[i]));
   }));

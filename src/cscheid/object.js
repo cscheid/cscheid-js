@@ -6,7 +6,8 @@
 // from https://github.com/jashkenas/underscore/blob/master/underscore.js
 //     Underscore.js 1.9.1
 //     http://underscorejs.org
-//     (c) 2009-2018 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+//     (c) 2009-2018 Jeremy Ashkenas, DocumentCloud and Investigative
+//     Reporters & Editors
 
 const createAssigner = function(keysFunc, defaults) {
   return function(obj) {
@@ -112,7 +113,7 @@ function cb(value, context, argCount) {
   return property(value);
 }
 
-var optimizeCb = function(func, context, argCount) {
+const optimizeCb = function(func, context, argCount) {
   if (context === void 0) return func;
   switch (argCount == null ? 3 : argCount) {
     case 1: return function(value) {
@@ -126,8 +127,8 @@ var optimizeCb = function(func, context, argCount) {
       return func.call(context, accumulator, value, index, collection);
     };
   }
-  return function() {
-    return func.apply(context, arguments);
+  return function(...rest) {
+    return func.apply(context, rest);
   };
 };
 
@@ -202,11 +203,12 @@ export function isObject(obj) {
   return type === 'function' || type === 'object' && !!obj;
 }
 
-const reStrSymbol = /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
+const reStrSymbol =
+      /[^\ud800-\udfff]|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff]/g;
 /**
  * Safely create a real, live array from anything iterable.
  *
- * @param {obj} input obj
+ * @param {Object} obj obj
  * @return {Array} an array containing the values in obj.
  */
 export function toArray(obj) {
@@ -229,9 +231,9 @@ export function toArray(obj) {
 /**
  * Returns true if all elements in obj pass the predicate
  *
- * @param {obj} input the object
- * @param {predicate} input the predicate, or identity
- * @param {context} input the context to be passed to the predicate,
+ * @param {Object} obj the object
+ * @param {function} predicate the predicate, or identity
+ * @param {Object} context the context to be passed to the predicate,
  *   or nothing
  * @return {boolean} false if any of the elements in obj fail the
  *   predicate, true otherwise
@@ -252,9 +254,9 @@ export function all(obj, predicate, context) {
 /**
  * Returns true if any element in obj passes the predicate
  *
- * @param {obj} input the object
- * @param {predicate} input the predicate, or identity
- * @param {context} input the context to be passed to the predicate,
+ * @param {Object} obj the object
+ * @param {function} predicate the predicate, or identity
+ * @param {Object} context the context to be passed to the predicate,
  *   or nothing
  * @return {boolean} false if none of the elements in obj pass the
  *   predicate, true otherwise

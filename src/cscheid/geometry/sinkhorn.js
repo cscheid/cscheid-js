@@ -51,7 +51,8 @@ export function dualSinkhornDivergence(
   }
   const v = eM(c, inv(mM(k, u, true, false)));
   const d = cscheid.blas.dot(u, mM(cscheid.linalg.schurProduct(k, m), v));
-  const pLambdaTrunc = cscheid.linalg.scaleRows(cscheid.linalg.scaleCols(k, v), u);
+  const pLambdaTrunc = cscheid.linalg.scaleRows(
+      cscheid.linalg.scaleCols(k, v), u);
   const pLambda = [];
   let nZI = 0;
   i.forEach((v) => {

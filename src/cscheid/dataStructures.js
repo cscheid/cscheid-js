@@ -61,7 +61,7 @@ export function binaryHeap(values, priorities) {
 
   /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "checkHealth" }]*/
   function checkHealth() {
-    for (var i = 0; i < heap.length; ++i) {
+    for (let i = 0; i < heap.length; ++i) {
       const ci = [left(i), right(i)];
       ci.forEach((j) => {
         if (j < heap.length && priorities[j] > priorities[i]) {

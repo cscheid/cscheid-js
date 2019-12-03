@@ -71,7 +71,8 @@ distributions.gaussian2D = function(mu, sigma) {
   const vecGen = distributions.iidVec(normalVariate, n);
   return function() {
     const normalVariate = vecGen();
-    return cscheid.linalg.add(mu, cscheid.linalg.elementMul(normalVariate, sigma));
+    return cscheid.linalg.add(
+        mu, cscheid.linalg.elementMul(normalVariate, sigma));
   };
 };
 
@@ -93,7 +94,8 @@ distributions.mixture = function(ds, ws) {
     };
   } else {
     const sumWeights = cscheid.array.prefixSum(ws);
-    const mixtureDist = distributions.uniform(0, sumWeights[sumWeights.length - 1]);
+    const mixtureDist = distributions.uniform(
+        0, sumWeights[sumWeights.length - 1]);
     return function() {
       const u = mixtureDist();
       const i = cscheid.array.upperBound(sumWeights, u);

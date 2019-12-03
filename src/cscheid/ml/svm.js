@@ -32,7 +32,8 @@ export function svmTrain(data, lambda, learningRate) {
     blas.axby(1, gVec, -lambda, w);
     blas.axby(1, w, learningRate, gVec);
     b = b + learningRate * g;
-    console.log(`Loss after gen ${i}: ${loss}. Gradient magnitude: ${blas.dot(gVec, gVec)}`);
+    console.log(`Loss after gen ${i}: ${loss}. `);
+    console.log(`Gradient magnitude: ${blas.dot(gVec, gVec)}`);
   }
 
   const result = {

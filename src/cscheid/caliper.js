@@ -7,6 +7,13 @@ import * as cscheid from '../cscheid.js';
 // all of caliper's reconstruction kernels are uniformly spaced, so
 // these are uniform b-splines
 
+/**
+ * returns a function that evaluates the n-th order uniform
+ * b-spline.
+ * @param {number} order order of the b-spline
+ * @return {function} that evaluates the n-th order b-spline at a
+ * given point
+ */
 function bSpline(order) {
   const n = order;
   const result = function(x) {
@@ -36,14 +43,28 @@ function bSpline(order) {
   return result;
 }
 
-export var kernels = {};
+/**
+ * object storing the supported reconstruction kernels. Currently,
+ * only bSplines are supported.
+ */
+export const kernels = {};
 kernels.bSpline = bSpline;
 
 // assumes data has been sampled at integer values
 // also fairly inefficient.
+/**
+ * creates a function given an array of weights and a
+ * reconstruction kernel.
+ *
+ * @param {Array} array the array of weights
+ * @param {function} kernel the reconstruction kernel
+ * @return {function} the function
+ */
 export function makeFunction(array, kernel) {
   return function(s) {
-    const ix = ~~s; let u; let j;
+    const ix = ~~s;
+    let u;
+    let j;
     let result = 0;
     for (j = Math.min(ix, array.length - 1), u = s - j;
       j >= 0 && u <= kernel.support[1];

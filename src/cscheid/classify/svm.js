@@ -4,7 +4,8 @@ import * as blas from '../blas.js';
 
 // essentially an implementation of
 // Algorithm 22 in http://ciml.info/dl/v0_99/ciml-v0_99-ch07.pdf
-// except that we add a momentum term, literally by following eq1 of https://distill.pub/2017/momentum/
+// except that we add a momentum term, literally by following eq1 of
+// https://distill.pub/2017/momentum/
 
 // expects data to be array of objects with keys x and y.
 //
@@ -28,7 +29,8 @@ export function svmTrain(data, lambda, learningRate, momentum) {
 
   let loss;
   let gVec;
-  for (var i = 0; i < maxIter; ++i) {
+  let i;
+  for (i = 0; i < maxIter; ++i) {
     loss = 0;
     gVec = new Float64Array(l);
     let g = 0;
@@ -54,7 +56,8 @@ export function svmTrain(data, lambda, learningRate, momentum) {
     bz = g + beta * bz;
     b = -alpha * bz + b;
   }
-  console.log(`Loss after gen ${i}: ${loss}. Gradient magnitude: ${blas.dot(gVec, gVec)}`);
+  console.log(`Loss after gen ${i}: ${loss}. `);
+  console.log(`Gradient magnitude: ${blas.dot(gVec, gVec)}`);
 
   const result = {
     classify: function(x) {

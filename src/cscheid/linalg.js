@@ -216,9 +216,9 @@ export function matVecMult(m, v) {
 
 export function matVecMul(a, v, transm) {
   // a is m x n
-  let result; let i; let j; let m; let n;
-  m = a.length;
-  n = a[0].length;
+  let result; let i; let j;
+  const m = a.length;
+  const n = a[0].length;
   if (!transm) {
     // a is m x n
     // v has n entries
@@ -330,12 +330,15 @@ export function centerColumns(m) {
  * corresponding to u and v must differ. m >= n is assumed (with m =
  * a.length and n = a[0].length)
  *
- *  @param a {Array} Represents the matrix A to be decomposed
- *  @param [withu] {bool} {true} if U is desired {false} otherwise
- *  @param [withv] {bool} {true} if U is desired {false} otherwise
- *  @param [eps] {Number} A constant used in the test for convergence;
+ * Editor's note: this would have been a straightforward copy
+ * but eslint did its thing :(
+ *
+ *  @param {Array} a - Represents the matrix A to be decomposed
+ *  @param {bool} [withu] {true} if U is desired {false} otherwise
+ *  @param {bool} [withv] {true} if U is desired {false} otherwise
+ *  @param {Number} [eps] A constant used in the test for convergence;
  *  should not be smaller than the machine precision
- *  @param [tol] {Number} A machine dependent constant which should be
+ *  @param {Number} [tol] A machine dependent constant which should be
  *    set equal to B/eps0 where B is the smallest positive number
  *    representable in the computer
  *
@@ -370,7 +373,8 @@ export function svd(a, withu, withv, eps, tol) {
     throw new TypeError('Invalid matrix: m < n');
   }
 
-  let i; let j; let k; let l; let l1; let c; let f; let g; let h; let s; let x; let y; let z;
+  let i; let j; let k; let l; let l1; let c;
+  let f; let g; let h; let s; let x; let y; let z;
 
   g = 0;
   x = 0;

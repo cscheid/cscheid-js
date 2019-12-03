@@ -1,12 +1,13 @@
 /** @module cscheid/math
  */
-export var eps = 1e-6;
+export let eps = 1e-6;
 
 /**
  * executes function with a different epsilon value
  *
  * @param {number} thisEps - epsilon value with which to run function
  * @param {function} f - function to run
+ * @return {Object} result of calling f()
  */
 export function withEps(thisEps, f) {
   const oldEps = eps;
@@ -56,7 +57,8 @@ export function withinEpsRel(v1, v2) {
  * @param {number} a - a
  * @param {number} b - b
  * @param {number} c - c
- * @return {Object} object o such that o.root1 and o.root2 are both roots of quadratic
+ * @return {Object} object o such that o.root1 and o.root2 are both
+ * roots of quadratic
  */
 export function quadratic(a, b, c) {
   // numerics is hard.
@@ -154,13 +156,13 @@ export function findExtremum(f, lo, mid, up) {
   const phi = 0.618;
   while (d > eps) {
     const longLeft = (mid - lo) > (up - mid);
-    var newMid; var fNewMid;
+    let newMid;
     if (longLeft) {
       newMid = phi * mid + (1 - phi) * lo;
     } else {
       newMid = phi * mid + (1 - phi) * up;
     }
-    fNewMid = f(newMid);
+    const fNewMid = f(newMid);
     switch ((!longLeft) * 2 + ((fNewMid >= fMid) ^ (!mode))) {
       case 0:
         up = mid; // case 0

@@ -1,14 +1,15 @@
 /** @module cscheid/array */
 
 /**
- * returns the concatenation of the arrays. Eg `concat([[1,2,3],[4]]) => [1,2,3,4]`
+ * returns the concatenation of the arrays. Eg
+ * `concat([[1,2,3],[4]]) => [1,2,3,4]`
  * This is _not_ "flatten": it won't work on nested structures.
  *
  * @param {Array} lst - the array of arrays
  * @return {Array} the concatenated array
  **/
 export function concat(lst) {
-  return [].concat.apply([], lst);
+  return [].concat(...lst);
 }
 
 /**
@@ -111,8 +112,10 @@ export function upperBound(lst, target) {
  * Returns the discrete histogram of the array
  *
  * @param {Array} lst - the array to be processed
- * @param {Function} funP - the function that sends array values to histogram bins
- * @return {Map} the histogram, represented as a map of bin keys to counts
+ * @param {Function} funP - the function that sends array values to
+ * histogram bins
+ * @return {Map} the histogram, represented as a map of bin keys to
+ * counts
  */
 export function histogram(lst, funP) {
   const fun = funP ? funP : ((d) => d);

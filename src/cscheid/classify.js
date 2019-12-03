@@ -11,7 +11,8 @@ export function svmTrain(data, lambda, learningRate) {
 export function nearestNeighbors(data, queryPoint, k) {
   const heap = cscheid.dataStructures.binaryHeap();
   data.forEach((currentPoint, i) => {
-    const currentDistance = cscheid.linalg.distance2(currentPoint.point, queryPoint.point);
+    const currentDistance = cscheid.linalg.distance2(
+        currentPoint.point, queryPoint.point);
     heap.add(i, currentDistance);
     if (heap.size() > k) {
       heap.pop();
@@ -55,7 +56,8 @@ export function nearestNeighbors2D(quadtree, queryPoint, k) {
       }
 
       // all distances to points inside will be at least distToNode
-      const distToNode = cscheid.linalg.distance2([distToNodeX, distToNodeY], queryPoint.point);
+      const distToNode = cscheid.linalg.distance2(
+          [distToNodeX, distToNodeY], queryPoint.point);
       earlyOut = distToNode >= heap.maxPriority();
     }
 
@@ -68,7 +70,8 @@ export function nearestNeighbors2D(quadtree, queryPoint, k) {
 
     if (!node.length) {
       do {
-        const currentDistance = cscheid.linalg.distance2(node.data.point, queryPoint.point);
+        const currentDistance = cscheid.linalg.distance2(
+            node.data.point, queryPoint.point);
         heap.add(node.data.i, currentDistance);
         if (heap.size() > k) {
           heap.pop();

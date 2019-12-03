@@ -2,7 +2,7 @@ let indent = '';
 /**
  * run all tests in the list of modules
  *
- * @param {lst} input list of modules to run
+ * @param {Array} lst list of modules to run
  */
 export function testModules(lst) {
   lst.forEach((mod) => {

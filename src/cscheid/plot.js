@@ -17,7 +17,8 @@ export function surface(opts) {
   const height = opts.height || 300;
   const axes = opts.axes === undefined ? true : opts.axis;
   const margin = opts.margin === undefined ? 10 : opts.margin;
-  const element = opts.element || cscheid.debug.die('element parameter is required');
+  const element = opts.element ||
+        cscheid.debug.die('element parameter is required');
 
   const svg = element.append('svg')
       .attr('width', width)
@@ -66,7 +67,8 @@ export function surface(opts) {
     text: true,
     on: true,
   };
-  // wrappedSelection is _NOT EXACTLY_ a d3 selection, but it mostly looks like one.
+  // wrappedSelection is _NOT EXACTLY_ a d3 selection, but it mostly
+  // looks like one.
   // Be aware of this..
   function wrappedSelection(sel, fixedKeyMethods, functionKeyMethods) {
     let wrapperFunction;
@@ -74,20 +76,21 @@ export function surface(opts) {
     functionKeyMethods = functionKeyMethods || {};
     const result = {
       // don't wrap call, since it doesn't return a selection
-      call: function() {
-        const callback = arguments[0];
-        arguments[0] = this;
-        callback.apply(null, arguments);
+      call: function(...rest) {
+        const callback = rest[0];
+        rest[0] = this;
+        callback.apply(null, ...rest);
         return this;
       },
-      callReturn: function() {
-        const callback = arguments[0];
-        arguments[0] = this;
-        return callback.apply(null, arguments);
+      callReturn: function(...rest) {
+        const callback = rest[0];
+        rest[0] = this;
+        return callback.apply(null, ...rest);
       },
-      _select: function() {
-        const innerSelResult = d3.select.apply(null, arguments);
-        return wrappedSelection(innerSelResult, fixedKeyMethods, functionKeyMethods);
+      _select: function(...rest) {
+        const innerSelResult = d3.select(...rest);
+        return wrappedSelection(
+            innerSelResult, fixedKeyMethods, functionKeyMethods);
       },
     }; let methodName;
     result.__sel__ = sel;
@@ -103,53 +106,63 @@ export function surface(opts) {
       }
 
       // force a closure to capture in-loop variables
-      result[methodName] = ((methodName) => function() {
-        const innerSelResult = sel[methodName].apply(sel, arguments);
-        return wrappedSelection(innerSelResult, fixedKeyMethods, functionKeyMethods);
+      result[methodName] = ((methodName) => function(...rest) {
+        const innerSelResult = sel[methodName](...rest);
+        return wrappedSelection(
+            innerSelResult, fixedKeyMethods, functionKeyMethods);
       })(methodName);
     }
 
     // now override the ones with explicitly given wrappers
     for (methodName in fixedKeyMethods) {
-      wrapperFunction = fixedKeyMethods[methodName];
+      if (Object.prototype.hasOwnProperty.call(fixedKeyMethods, methodName)) {
+        wrapperFunction = fixedKeyMethods[methodName];
 
-      // force a closure to capture in-loop variables
-      result[methodName] = ((methodName, wrapperFunction) => function(key, value) {
-        let wrappedValue;
-        if (_.isFunction(value)) {
-          wrappedValue = function() {
-            const result = value.apply(this, arguments);
-            return wrapperFunction(key, result);
+        // force a closure to capture in-loop variables
+        result[methodName] = ((methodName, wrapperFunction) => {
+          return function(key, value) {
+            let wrappedValue;
+            if (_.isFunction(value)) {
+              wrappedValue = function(...rest) {
+                const result = this.value(...rest);
+                return wrapperFunction(key, result);
+              };
+            } else if (value === undefined) {
+              wrappedValue = undefined;
+            } else {
+              wrappedValue = wrapperFunction(key, value);
+            }
+            const innerSelResult = sel[methodName].call(sel, key, wrappedValue);
+            return wrappedSelection(
+                innerSelResult, fixedKeyMethods, functionKeyMethods);
           };
-        } else if (value === undefined) {
-          wrappedValue = undefined;
-        } else {
-          wrappedValue = wrapperFunction(key, value);
-        }
-        const innerSelResult = sel[methodName].call(sel, key, wrappedValue);
-        return wrappedSelection(innerSelResult, fixedKeyMethods, functionKeyMethods);
-      })(methodName, wrapperFunction);
+        })(methodName, wrapperFunction);
+      }
     }
 
     for (methodName in functionKeyMethods) {
-      wrapperFunction = functionKeyMethods[methodName];
+      if (Object.prototype.hasOwnProperty.call(
+          functionKeyMethods, methodName)) {
+        wrapperFunction = functionKeyMethods[methodName];
 
-      // force a closure to capture in-loop variables
-      result[methodName] = ((methodName, wrapperFunction) => function(key) {
-        let wrappedKey;
-        if (_.isFunction(key)) {
-          wrappedKey = function() {
-            const result = key.apply(this, arguments);
-            return wrapperFunction(key, result);
-          };
-        } else if (key === undefined) {
-          wrappedKey = undefined;
-        } else {
-          wrappedKey = wrapperFunction(key);
-        }
-        const innerSelResult = sel[methodName].call(sel, wrappedKey);
-        return wrappedSelection(innerSelResult, fixedKeyMethods, functionKeyMethods);
-      })(methodName, wrapperFunction);
+        // force a closure to capture in-loop variables
+        result[methodName] = ((methodName, wrapperFunction) => function(key) {
+          let wrappedKey;
+          if (_.isFunction(key)) {
+            wrappedKey = function(...rest) {
+              const result = this.key(...rest);
+              return wrapperFunction(key, result);
+            };
+          } else if (key === undefined) {
+            wrappedKey = undefined;
+          } else {
+            wrappedKey = wrapperFunction(key);
+          }
+          const innerSelResult = sel[methodName].call(sel, wrappedKey);
+          return wrappedSelection(
+              innerSelResult, fixedKeyMethods, functionKeyMethods);
+        })(methodName, wrapperFunction);
+      }
     }
 
     return result;
@@ -259,8 +272,10 @@ export function create(div, width, height, opts) {
     }, opts);
   }
 
-  const xScale = opts.xScale().range([margins.left, dims.width - margins.right]);
-  const yScale = opts.yScale().range([dims.height - margins.bottom, margins.top]);
+  const xScale = opts.xScale()
+      .range([margins.left, dims.width - margins.right]);
+  const yScale = opts.yScale()
+      .range([dims.height - margins.bottom, margins.top]);
   const scene = [];
 
   const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
@@ -414,12 +429,16 @@ export function create(div, width, height, opts) {
     function arrowShape(d) {
       const p = accessors.vector(d);
       // var p = d.rangePerturbation || reader.project(d);
-      const l = Math.sqrt(cscheid.linalg.norm2(p)); // this is the length in world-scale; need to map to length in screen-space
-      const sx = Math.abs(xScale(1) - xScale(0)); const sy = Math.abs(yScale(1) - yScale(0));
+      // this is the length in world-scale; need to map to length in
+      // screen-space
+      const l = Math.sqrt(cscheid.linalg.norm2(p));
+      const sx = Math.abs(xScale(1) - xScale(0));
+      const sy = Math.abs(yScale(1) - yScale(0));
       if (!warnedAboutAspectRatio &&
           !math.withEps(0.01, () => math.withinEpsRel(sx, sy))) {
         warnedAboutAspectRatio = true;
-        console.warn('Drawing arrows in a non-square axis pair of aspect ratio ', sx / sy);
+        console.warn('Drawing arrows in a non-square ' +
+                     'axis pair of aspect ratio ', sx / sy);
       }
 
       const arrowHeadScale = (accessors.arrowHeadScale || function() {
@@ -467,7 +486,8 @@ export function create(div, width, height, opts) {
       accessors: opts.accessors,
       update: function(transition) {
         const sel = this.group.selectAll(element);
-        return (transition ? sel.transition().call(transition) : sel).call(opts.setter(this.accessors));
+        return (transition ? sel.transition().call(transition) : sel)
+            .call(opts.setter(this.accessors));
       },
     });
     sceneObject.update();
@@ -475,7 +495,7 @@ export function create(div, width, height, opts) {
     return sceneObject;
   }
 
-  var result = {
+  const result = {
 
     // FIXME: I don't like exposing the scales: if clients change
     // settings directly, they need to remember to call update().
@@ -547,7 +567,8 @@ export function create(div, width, height, opts) {
         titleGroup: axisTitleG,
         axisObject: axis,
         update: function(transition) {
-          return (transition ? axisG.transition().call(transition) : axisG).call(axis);
+          return (transition ? axisG.transition().call(transition) : axisG)
+              .call(axis);
         },
       });
       if (opts.title) {
@@ -585,7 +606,8 @@ export function create(div, width, height, opts) {
         titleGroup: axisTitleG,
         axisObject: axis,
         update: function(transition) {
-          return (transition ? axisG.transition().call(transition) : axisG).call(axis);
+          return (transition ? axisG.transition().call(transition) : axisG)
+              .call(axis);
         },
       });
       if (opts.title) {
@@ -741,7 +763,8 @@ export function create(div, width, height, opts) {
           const newScalarField = scalarField.scalarField;
           const newContourValues = scalarField.contourValues;
           const tweenField = new Float64Array(newScalarField);
-          // d3 threshold array have to be Array objects, not TypedArray objects.
+          // d3 threshold array have to be Array objects, not
+          // TypedArray objects.
           const tweenContour = Array.prototype.slice(newContourValues);
 
           if (transition) {
@@ -771,8 +794,10 @@ export function create(div, width, height, opts) {
             return sel.transition().call(transition)
                 .attr('stroke', accessors.stroke || 'black')
                 .attr('fill', accessors.fill || 'none')
-                .attr('stroke-dasharray', accessors['stroke-dasharray'] || null)
-                .attr('stroke-dashoffset', accessors['stroke-dashoffset'] || null)
+                .attr('stroke-dasharray',
+                    accessors['stroke-dasharray'] || null)
+                .attr('stroke-dashoffset',
+                    accessors['stroke-dashoffset'] || null)
                 .style('stroke-width', accessors['stroke-width'] || null)
             ;
           } else {
@@ -781,8 +806,10 @@ export function create(div, width, height, opts) {
                 sel.attr('d', contourPath)
                     .attr('stroke', accessors.stroke || 'black')
                     .attr('fill', accessors.fill || 'none')
-                    .attr('stroke-dasharray', accessors['stroke-dasharray'] || null)
-                    .attr('stroke-dashoffset', accessors['stroke-dashoffset'] || null)
+                    .attr('stroke-dasharray',
+                        accessors['stroke-dasharray'] || null)
+                    .attr('stroke-dashoffset',
+                        accessors['stroke-dashoffset'] || null)
                     .style('stroke-width', accessors['stroke-width'] || null);
               };
             })(this.accessors));
@@ -822,7 +849,9 @@ export function create(div, width, height, opts) {
           const sel = group.selectAll('path');
           return (transition ? sel.transition().call(transition) : sel)
               .attr('d', function(d, ix) {
-                const x2 = d3.scaleLinear().domain([0, lineResolution]).range(xScale.domain());
+                const x2 = d3.scaleLinear()
+                    .domain([0, lineResolution])
+                    .range(xScale.domain());
                 const pts = [];
                 const value = that.accessors.value(d, ix);
                 for (let i = 0; i < lineResolution; ++i) {

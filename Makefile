@@ -13,6 +13,9 @@ docs:
 lint:
 	./node_modules/.bin/eslint ./src/
 
+lint-fix:
+	./node_modules/.bin/eslint --fix ./src/
+
 install-deps:
 	npm install jsdoc eslint eslint-config-google
 

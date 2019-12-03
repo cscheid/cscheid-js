@@ -13,12 +13,12 @@ import * as math from './math.js';
  * powerIteration: finds the dominant eigenvector of A through
  * power iteration. uses math.eps as the threshold value
  *
- * @param {AvFun} input a function that satisfies v -> A . v
- * @param {d} input the dimension of the vector to use
- * @returns {v} the eigenvector corresponding to the largest eigenvalue
+ * @param {function} avFun a function that satisfies v -> A . v
+ * @param {number} d the dimension of the vector to use
+ * @return {Array} the eigenvector corresponding to the largest eigenvalue
  **/
 
-export function powerIteration(AvFun, d) {
+export function powerIteration(avFun, d) {
   let v = [];
   for (let i = 0; i < d; ++i) {
     v.push(random.normalVariate());
@@ -27,11 +27,11 @@ export function powerIteration(AvFun, d) {
   v = new Float64Array(v);
   linalg.normalize(v);
   let val;
-
+  let delta;
   do {
-    const newV = AvFun(v);
+    const newV = avFun(v);
     val = linalg.normalize(newV);
-    var delta = linalg.distance2(newV, v);
+    delta = linalg.distance2(newV, v);
     v = newV;
   } while (delta > math.eps);
 
@@ -72,12 +72,12 @@ export function inversePowerIteration(AvFun, d) {
  *
  * Returns the vector that minimizes ||Ax - b||_2
  *
- * @param {AvFun} input a function that satisfies v -> A . v
- * @param {ATvFun} input a function that satisfies v -> A^T . v
- * @param {b} input the vector b
- * @return {x} the vector that minimizes ||Ax - b||_2
+ * @param {function} avFun a function that satisfies v -> A . v
+ * @param {function} aTvFun a function that satisfies v -> A^T . v
+ * @param {Array} b the vector b
+ * @return {Array} the vector that minimizes ||Ax - b||_2
  */
-export function lsqr(AvFun, ATvFun, b) {
+export function lsqr(avFun, aTvFun, b) {
   // direct transcription of LSQR on https://web.stanford.edu/class/cme324/paige-saunders2.pdf
   // FIXME: This does _not_ solve the ridge-regression version
 
@@ -86,7 +86,7 @@ export function lsqr(AvFun, ATvFun, b) {
 
   // (1) (Initialize.)
   let beta = blas.normalize(b); let u = b;
-  const ATu = ATvFun(u);
+  const ATu = aTvFun(u);
   let alpha = blas.normalize(ATu);
   let v = ATu;
   const x = new Float64Array(b.length);
@@ -96,14 +96,15 @@ export function lsqr(AvFun, ATvFun, b) {
 
   let BkF = 0;
   let nIter = 0; const maxIter = 100;
+  let stoppingCriterion;
 
   do { // (for i = 1,2,3,...) repeat steps 3--6.
     // (3) (Continue the bidiagonalization)
-    let tmp = AvFun(v);
+    let tmp = avFun(v);
     blas.axby(-alpha, u, 1, tmp);
     beta = blas.normalize(tmp);
     u = tmp;
-    tmp = ATvFun(u);
+    tmp = aTvFun(u);
     blas.axby(-beta, v, 1, tmp);
     alpha = blas.normalize(tmp);
     v = tmp;
@@ -136,7 +137,7 @@ export function lsqr(AvFun, ATvFun, b) {
     // var ANorm = BkF;
     // var ATrkNorm = phiBar * alpha * Math.abs(c);
 
-    var stoppingCriterion = alpha * Math.abs(c) / BkF; // phiBar cancels out
+    stoppingCriterion = alpha * Math.abs(c) / BkF; // phiBar cancels out
     ++nIter;
   } while (stoppingCriterion > atol && nIter < maxIter);
 

@@ -308,11 +308,15 @@ Ellipse.prototype.transform = function(t) {
 
 Ellipse.prototype.lineIntersection = function(c, p) {
   const pc = p.minus(c);
-  const u2 = this.a * Math.pow(pc.x, 2) + this.b * Math.pow(pc.y, 2) + this.c * pc.x * pc.y;
+  const u2 = this.a * Math.pow(pc.x, 2) +
+        this.b * Math.pow(pc.y, 2) +
+        this.c * pc.x * pc.y;
   const u1 = 2 * this.a * c.x * pc.x + 2 * this.b * c.y * pc.y +
       this.c * c.y * pc.x + this.c * c.x * pc.y + this.d * pc.x +
       this.e * pc.y;
-  const u0 = this.a * Math.pow(c.x, 2) + this.b * Math.pow(c.y, 2) + this.c * c.x * c.y +
+  const u0 = this.a * Math.pow(c.x, 2) +
+        this.b * Math.pow(c.y, 2) +
+        this.c * c.x * c.y +
       this.d * c.x + this.e * c.y + this.f;
   const result = [];
   const sols = math.quadratic(u2, u1, u0);
@@ -336,9 +340,10 @@ Ellipse.prototype.closestIntersection = function(c, p) {
 Ellipse.prototype.tangentPointWithNormal = function(n) {
   const tangent = vec2(n.y, -n.x);
   let p1 = this.center;
+  let closestP;
   do {
     const p2 = p1.plus(n);
-    var closestP = this.closestIntersection(p2, p1);
+    closestP = this.closestIntersection(p2, p1);
     if (closestP === undefined) {
       return undefined;
     }
@@ -376,7 +381,8 @@ Ellipse.prototype.closestPoint = function(p) {
   const axis = this.majorAxis();
   const that = this;
 
-  if (math.withinEps(axis[1].minus(axis[0]).unit().cross(p.minus(axis[1]).unit()))) {
+  if (math.withinEps(axis[1].minus(axis[0]).unit()
+      .cross(p.minus(axis[1]).unit()))) {
     if (p.distance(axis[0]) < p.distance(axis[1])) {
       return axis[0];
     } else {

@@ -7,8 +7,24 @@
 	"browser": true,
 	"es6": true
     },
-    // "rules": {
-    // 	"space-infix-ops": ["error", { "int32Hint": false }]
-    // },
-    "extends": ["google", "eslint:recommended"]
+    "extends": ["google", "eslint:recommended"],
+    "rules": {
+	/* deprecated anyway, and silly when requiring it for *EVERY*
+	 * function */
+	"require-jsdoc": "off",
+	
+	/* try writing d3 code with this */
+	"no-invalid-this": "off",
+
+	/* google, no. let me do what I want */
+	"guard-for-in": "off",
+	
+	"indent": "warn", // we'll fix it with --fix anyway
+
+	/* no, google, no */
+	"prefer-rest-params": "off",
+
+	/* great, google, now I can't reference stackoverflow questions anymore */
+	"max-len": ["error", { "ignoreUrls": true }]
+    }
 }

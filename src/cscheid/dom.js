@@ -64,7 +64,10 @@ export function setupCanvas(canvas) {
  * @return {number} size in CSS pixels
  */
 export function convertToPixelUnits(size) {
-  const d = d3.select('body').append('div').style('position', 'absolute').style('left', size);
+  const d = d3.select('body')
+      .append('div')
+      .style('position', 'absolute')
+      .style('left', size);
   const v1 = d.node().getBoundingClientRect().x;
   d.style('left', null);
   const v2 = d.node().getBoundingClientRect().x;
@@ -75,7 +78,8 @@ export function convertToPixelUnits(size) {
 /**
  * Sets up an animation callback loop with requestAnimationFrame.
  *
- * @param {function} fun - animation callback to be called at every rendering tick.
+ * @param {function} fun - animation callback to be called at every
+ * rendering tick.
  * @return {function} a callback that, when called, will stop the animation.
  */
 export function animate(fun) {

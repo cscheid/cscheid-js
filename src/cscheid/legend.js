@@ -125,7 +125,8 @@ export function colorLegend(opts) {
   const size = opts.size || 20;
   const tickFormat = opts.tickFormat || d3.format('.0s');
 
-  const colorScaleDomainBounds = [scale.domain()[0], scale.domain()[scale.domain().length - 1]];
+  const colorScaleDomainBounds = [
+    scale.domain()[0], scale.domain()[scale.domain().length - 1]];
   const legendScale = d3.scaleLinear()
       .domain(colorScaleDomainBounds)
       .range(extent);
@@ -153,7 +154,8 @@ export function colorLegend(opts) {
         .enter()
         .append('rect')
         .attr('width', size)
-        .attr('height', ~~(Math.abs(legendScale(legendValues[1]) - legendScale(legendValues[0])) + 1))
+        .attr('height', ~~(Math.abs(legendScale(legendValues[1]) -
+                                    legendScale(legendValues[0])) + 1))
         .attr('x', 0)
         .attr('y', legendScale)
         .call(setScale);

@@ -53,7 +53,7 @@ export function leastSquaresLFS(data, space, lambda, standardize) {
     }
     stdevs[0] = 1;
     for (i = 0; i < data.xs.length; ++i) {
-      for (j = 1; j <= degree; ++j) {
+      for (let j = 1; j <= degree; ++j) {
         const v = space[j](data.xs[i]);
         averages[j] += v;
         stdevs[j] += v * v;
@@ -61,7 +61,8 @@ export function leastSquaresLFS(data, space, lambda, standardize) {
     }
     for (i = 1; i <= degree; ++i) {
       averages[i] /= data.xs.length;
-      stdevs[i] = Math.pow(stdevs[i] / data.xs.length - Math.pow(averages[i], 2), 0.5);
+      const aa = Math.pow(averages[i], 2);
+      stdevs[i] = Math.pow(stdevs[i] / data.xs.length - aa, 0.5);
     }
   } else {
     for (i = 0; i <= degree; ++i) {
@@ -72,7 +73,7 @@ export function leastSquaresLFS(data, space, lambda, standardize) {
 
   for (i = 0; i < data.xs.length; ++i) {
     const row = [];
-    for (var j = 0; j <= degree; ++j) {
+    for (let j = 0; j <= degree; ++j) {
       row.push((space[j](data.xs[i]) - averages[j]) / stdevs[j]);
     }
     matrix.push(row);
@@ -90,7 +91,7 @@ export function leastSquaresLFS(data, space, lambda, standardize) {
   const sigmaCrossUtv = cscheid.linalg.elementMul(sigmaCross, utv);
   const betaHat = cscheid.linalg.matVecMul(s.v, sigmaCrossUtv);
 
-  var fit = {
+  const fit = {
     beta: betaHat,
     averages: averages,
     stdevs: stdevs,
@@ -98,7 +99,8 @@ export function leastSquaresLFS(data, space, lambda, standardize) {
     predict: function(x) {
       let result = 0;
       for (let i = 0; i < fit.beta.length; ++i) {
-        result += ((space[i](x) - fit.averages[i]) / fit.stdevs[i]) * fit.beta[i];
+        const c = (space[i](x) - fit.averages[i]);
+        result += (c / fit.stdevs[i]) * fit.beta[i];
       }
       return result;
     },

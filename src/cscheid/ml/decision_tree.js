@@ -41,14 +41,18 @@ function majorityVoteCount(samples) {
 
 // decision tree training for datasets with purely categorical features.
 export function simpleDecisionTree() {
-  function internalTrain(labeledSamples, remainingFeatureValuePairs, remainingDepth) {
-    const h = cscheid.array.histogram(labeledSamples, (sample) => sample.label);
+  function internalTrain(
+      labeledSamples, remainingFeatureValuePairs, remainingDepth) {
+    const h = cscheid.array.histogram(
+        labeledSamples,
+        (sample) => sample.label);
     if (h.size === 0) {
       return leafNode(undefined);
     } else if (h.size === 1 ||
                remainingFeatureValuePairs.length === 0 ||
                remainingDepth === 0) {
-      const targetLabel = cscheid.map.argmax(h); // avoid recomputing histogram
+      // avoid recomputing histogram
+      const targetLabel = cscheid.map.argmax(h);
       return leafNode(targetLabel);
     }
     let bestScore = 0;
