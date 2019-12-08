@@ -86,6 +86,15 @@ export const categoricalColorScheme =
 // extra methods for the selection prototype
 
 if (d3 !== undefined) {
+  // return a selection with the parent nodes of the current
+  // selection's nodes.
+  //
+  // FIXME: this destroys the nesting structure of the selection,
+  // which could be a problem.
+  d3.selection.prototype.parents = function() {
+    return d3.selectAll(this.nodes().map(d => d.parentNode));
+  };
+  
   // http://stackoverflow.com/questions/14167863/how-can-i-bring-a-circle-to-the-front-with-d3
   d3.selection.prototype.moveToFront = function() {
     return this.each(function() {
