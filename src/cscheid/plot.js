@@ -259,7 +259,7 @@ export function create(div, width, height, opts) {
   }
 
   function sceneObjectProto(opts) {
-    return _.defaults({
+    return cscheid.object.defaults({
       moveToFront: function() {
         this.group.moveToFront();
       },
