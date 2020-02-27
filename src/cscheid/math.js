@@ -258,3 +258,39 @@ export function fact(n) {
   }
   return result;
 }
+
+/**
+ * return a function that evaluates the lagrange polynomial at a
+ * point, for the given data. Assumes all input $x$ values are
+ * different from one another.
+ *
+ * This is neither numerically stable nor a good way to actually do
+ * data fitting in practice. The implementation is also not
+ * efficient. Be warned.
+ *
+ * @param {Array} xVals - array of x values
+ * @param {Array} yVals - array of y values
+ * @return {function} function f such that f(xVals[i]) = yVals[i]
+ */
+
+export function lagrangePolynomial(xVals, yVals)
+{
+  return function(x)
+  {
+    let result = 0;
+    for (let i=0; i<xVals.length; ++i) {
+      let num = 1;
+      let denom = 1;
+      for (let j=0; j<xVals.length; ++j) {
+        if (i === j) {
+          continue;
+        } else {
+          num *= x - xVals[j];
+          denom *= xVals[i] - xVals[j];
+        }
+      }
+      result += yVals[i] * num / denom;
+    }
+    return result;
+  };
+}
