@@ -79,13 +79,13 @@ export function surface(opts) {
       call: function(...rest) {
         const callback = rest[0];
         rest[0] = this;
-        callback.apply(null, ...rest);
+        callback.apply(null, rest);
         return this;
       },
       callReturn: function(...rest) {
         const callback = rest[0];
         rest[0] = this;
-        return callback.apply(null, ...rest);
+        return callback.apply(null, rest);
       },
       _select: function(...rest) {
         const innerSelResult = d3.select(...rest);
@@ -124,7 +124,8 @@ export function surface(opts) {
             let wrappedValue;
             if (_.isFunction(value)) {
               wrappedValue = function(...rest) {
-                const result = this.value(...rest);
+                const result = value(...rest);
+                // const result = this.value(...rest);
                 return wrapperFunction(key, result);
               };
             } else if (value === undefined) {
